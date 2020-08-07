@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AccountStatusActivity"
+    android:background="@color/colorPrimary">
+
+    <include layout="@layout/app_bar_layout"
+        android:id="@+id/StatusToolBar"/>
+
+    <LinearLayout
+        android:id="@+id/Container"
+        android:layout_width="350dp"
+        android:layout_height="400dp"
+        android:orientation="vertical"
+        android:background="@drawable/button4"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Status"
+            android:textSize="25sp"
+            android:layout_marginTop="20dp"
+            android:textStyle="bold"/>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/Status"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="70dp"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:background="@drawable/button2">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/StatusEdit"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:hint="Status"
+            android:textSize="20sp"
+            android:textColor="#000"
+            android:paddingBottom="18dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="20dp"
+            android:background="@android:color/transparent"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/AlertMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Maximum characters 38 "
+            android:textSize="13sp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:textColor="#F00"
+            android:visibility="invisible"/>
+
+        <TextView
+            android:id="@+id/StringCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="13sp"
+            android:layout_gravity="right"
+            android:layout_marginTop="-85dp"
+            android:layout_marginRight="40dp"/>
+
+    <Button
+        android:id="@+id/changeStatusBtn"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
+        android:layout_below="@id/Status"
+        android:layout_gravity="center"
+        android:background="@drawable/button3"
+        android:text="Save changes"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:textColor="#FFF"
+        android:padding="10dp"
+        android:layout_marginTop="125dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

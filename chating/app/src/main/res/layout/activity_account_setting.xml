@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AccountSettingActivity"
+    android:background="@color/colorPrimary">
+
+   <include layout="@layout/app_bar_layout"
+       android:id="@+id/AccountSetting_ToolBar"/>
+
+   <de.hdodenhof.circleimageview.CircleImageView
+       android:id="@+id/UserImage"
+       android:layout_width="180dp"
+       android:layout_height="180dp"
+       android:layout_centerHorizontal="true"
+       android:layout_marginTop="100dp"
+       android:src="@drawable/user"/>
+
+   <TextView
+       android:id="@+id/UserName"
+       android:layout_width="match_parent"
+       android:layout_height="38dp"
+       android:text=""
+       android:layout_below="@id/UserImage"
+       android:textSize="25sp"
+       android:layout_marginTop="5dp"
+       android:gravity="center"
+       android:textColor="#FFF"
+       android:textStyle="bold"
+       android:paddingRight="15dp"
+       android:paddingLeft="15dp"/>
+
+   <TextView
+       android:id="@+id/UserStatus"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text=""
+       android:layout_below="@id/UserName"
+       android:textSize="18sp"
+       android:layout_marginTop="0dp"
+       android:gravity="center"
+       android:textColor="#FFF"
+       android:paddingRight="15dp"
+       android:paddingLeft="15dp"/>
+
+
+
+   <Button
+       android:id="@+id/changeStatusBtn"
+       android:layout_width="200dp"
+       android:layout_height="wrap_content"
+       android:layout_above="@id/changeImageBtn"
+       android:layout_centerHorizontal="true"
+       android:background="@drawable/button4"
+       android:text="Change Status"
+       android:textColor="@color/colorPrimary"
+       android:textAllCaps="true"
+       android:textSize="18sp"
+       android:padding="10dp"
+       android:layout_marginBottom="18dp"/>
+
+
+   <Button
+       android:id="@+id/changeImageBtn"
+       android:layout_width="200dp"
+       android:layout_height="wrap_content"
+       android:layout_alignParentBottom="true"
+       android:layout_centerHorizontal="true"
+       android:background="@drawable/button3"
+       android:text="Change Image"
+       android:textColor="#FFF"
+       android:textAllCaps="true"
+       android:textSize="18sp"
+       android:padding="10dp"
+       android:layout_marginBottom="55dp"/>
+
+</RelativeLayout>

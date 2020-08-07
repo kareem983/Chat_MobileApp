@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <item
+        android:id="@+id/contacts_AccountSetting_id"
+        android:title="Account Setting"/>
+
+    <item
+        android:id="@+id/contacts_AllUsers_id"
+        android:title="All Users"/>
+
+
+    <item
+        android:id="@+id/contacts_Logout_id"
+        android:title="Log Out"/>
+
+
+    <item
+        android:id="@+id/contacts_search_id"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="Seaech"
+        app:showAsAction="always" />
+
+
+</menu>
