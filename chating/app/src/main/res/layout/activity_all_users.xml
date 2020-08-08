@@ -4,17 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DisplayUserImageActivity"
-    android:background="#000">
+    tools:context=".AllUsersActivity">
 
-    <include layout="@layout/app_bar_layout3"
-        android:id="@+id/UserImageToolBar"/>
+    <include layout="@layout/app_bar_layout"
+        android:id="@+id/AllUsers_Toolbar"/>
 
-    <ImageView
-        android:id="@+id/DisUserImage"
+    <ListView
+        android:id="@+id/AllUsers_ListView_id"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_centerVertical="true"
-        android:scaleX="1.4"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/AllUsers_Toolbar"/>
 
 </RelativeLayout>

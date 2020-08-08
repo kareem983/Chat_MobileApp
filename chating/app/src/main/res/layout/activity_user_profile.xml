@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".UserProfileActivity"
+    android:background="#121111">
+
+
+    <ImageView
+        android:id="@+id/UserProfileImage"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_centerHorizontal="true"
+        android:scaleX="1.4"
+        android:scaleY="1.15"/>
+
+    <include layout="@layout/app_bar_layout4"
+        android:id="@+id/UserProfile_ToolBar"/>
+
+
+    <TextView
+        android:id="@+id/UserProfileName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/UserProfileImage"
+        android:layout_marginTop="50dp"
+        android:text=""
+        android:gravity="center"
+        android:textColor="#FFF"
+        android:textStyle="bold"
+        android:textSize="25sp"/>
+
+
+    <TextView
+        android:id="@+id/UserProfileStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/UserProfileName"
+        android:layout_marginTop="10dp"
+        android:text=""
+        android:gravity="center"
+        android:textColor="#FFF"
+        android:textSize="18sp"/>
+
+
+    <TextView
+        android:id="@+id/UserProfileTotalFriend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/UserProfileRequestBtn"
+        android:layout_marginBottom="15dp"
+        android:text="Total firends"
+        android:gravity="center"
+        android:textColor="#FFF"
+        android:textSize="18sp"/>
+
+
+    <Button
+        android:id="@+id/UserProfileRequestBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button5"
+        android:text="send friend request"
+        android:textColor="#FFF"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginBottom="55dp"/>
+
+
+</RelativeLayout>

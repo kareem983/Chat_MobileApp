@@ -86,7 +86,7 @@ public class AccountSettingActivity extends AppCompatActivity {
 
                 UserName.setText(Name);
                 UserStatus.setText(Status);
-                if(!Image.equals("default")) Picasso.get().load(Image).into(UserImage);
+                if(!Image.equals("default")) Picasso.get().load(Image).placeholder(R.drawable.user).into(UserImage);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
