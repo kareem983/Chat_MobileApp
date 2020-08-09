@@ -16,6 +16,16 @@
         android:scaleX="1.4"
         android:scaleY="1.15"/>
 
+    <ImageView
+        android:id="@+id/UserProfileStar"
+        android:layout_width="70dp"
+        android:layout_height="65dp"
+        android:layout_below="@id/UserProfileImage"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="-12dp"
+        android:src="@drawable/star"
+        android:visibility="invisible"/>
+
     <include layout="@layout/app_bar_layout4"
         android:id="@+id/UserProfile_ToolBar"/>
 
@@ -23,7 +33,7 @@
     <TextView
         android:id="@+id/UserProfileName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="38sp"
         android:layout_below="@id/UserProfileImage"
         android:layout_marginTop="50dp"
         android:text=""
@@ -49,16 +59,16 @@
         android:id="@+id/UserProfileTotalFriend"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/UserProfileRequestBtn"
-        android:layout_marginBottom="15dp"
-        android:text="Total firends"
+        android:layout_below="@id/UserProfileStatus"
+        android:layout_marginTop="105dp"
+        android:text=""
         android:gravity="center"
         android:textColor="#FFF"
         android:textSize="18sp"/>
 
 
     <Button
-        android:id="@+id/UserProfileRequestBtn"
+        android:id="@+id/UserProfileSendRequestBtn"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -69,7 +79,68 @@
         android:textAllCaps="true"
         android:textSize="18sp"
         android:padding="10dp"
-        android:layout_marginBottom="55dp"/>
+        android:layout_marginBottom="55dp"
+        android:visibility="invisible"/>
+
+
+    <Button
+        android:id="@+id/UserProfileCancelRequestBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button5"
+        android:text="Cancel friend request"
+        android:textColor="#FFF"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginBottom="55dp"
+        android:visibility="invisible"/>
+
+
+    <Button
+        android:id="@+id/UserProfileConfirmRequestBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button4"
+        android:text="Confirm friend request"
+        android:textColor="@color/colorPrimary"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginBottom="105dp"
+        android:visibility="invisible"/>
+
+
+
+    <Button
+        android:id="@+id/UserProfileRejectRequestBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button3"
+        android:text="Reject friend request"
+        android:textColor="#FFF"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginBottom="40dp"
+        android:visibility="invisible"/>
+
+
+    <ImageView
+        android:id="@+id/UserProfileYouAreFriend"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-15dp"
+        android:gravity="center"
+        android:src="@drawable/friends"
+        android:visibility="invisible"/>
 
 
 </RelativeLayout>
