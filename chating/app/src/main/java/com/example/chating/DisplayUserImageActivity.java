@@ -48,7 +48,7 @@ public class DisplayUserImageActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String Image = snapshot.child("Image").getValue().toString();
-                if(!Image.equals("default")) Picasso.get().load(Image).into(UserImage);
+                if(!Image.equals("default")) Picasso.get().load(Image).placeholder(R.drawable.userr).into(UserImage);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}

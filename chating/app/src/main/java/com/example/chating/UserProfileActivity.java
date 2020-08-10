@@ -1,9 +1,12 @@
 package com.example.chating;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.icu.text.SimpleDateFormat;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -21,18 +24,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class UserProfileActivity extends AppCompatActivity {
     private Toolbar mToolBar;
     private ImageView UserImageView;
     private TextView UserNameView;
     private TextView UserStatusView;
     private TextView UserTotalFriendsView;
-    private ImageView UserProfileYouAreFriend;
     private ImageView UserProfileStar;
     private Button SendRequestBtn;
     private Button CancelRequestBtn;
     private Button ConfirmRequestBtn;
     private Button RejectRequestBtn;
+    private Button UnFriendPerson;
 
     private String UserId;
     private String UserName;
@@ -68,12 +74,12 @@ public class UserProfileActivity extends AppCompatActivity {
         UserNameView=(TextView)findViewById(R.id.UserProfileName);
         UserStatusView=(TextView)findViewById(R.id.UserProfileStatus);
         UserTotalFriendsView=(TextView)findViewById(R.id.UserProfileTotalFriend);
-        UserProfileYouAreFriend=(ImageView) findViewById(R.id.UserProfileYouAreFriend);
         UserProfileStar=(ImageView) findViewById(R.id.UserProfileStar);
         SendRequestBtn = (Button)findViewById(R.id.UserProfileSendRequestBtn);
         CancelRequestBtn = (Button)findViewById(R.id.UserProfileCancelRequestBtn);
         ConfirmRequestBtn = (Button)findViewById(R.id.UserProfileConfirmRequestBtn);
         RejectRequestBtn = (Button)findViewById(R.id.UserProfileRejectRequestBtn);
+        UnFriendPerson=(Button)findViewById(R.id.UserProfileUnFriendRequestBtn);
 
 
         //retrieve User data from the previous Activity
@@ -99,8 +105,8 @@ public class UserProfileActivity extends AppCompatActivity {
                 CancelRequestBtn.setVisibility(View.VISIBLE);
                 ConfirmRequestBtn.setVisibility(View.INVISIBLE);
                 RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileYouAreFriend.setVisibility(View.INVISIBLE);
                 UserProfileStar.setVisibility(View.INVISIBLE);
+                UnFriendPerson.setVisibility(View.INVISIBLE);
 
                 mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId);
                 mDatabaseReference.child("requestState").setValue("received");
@@ -119,14 +125,12 @@ public class UserProfileActivity extends AppCompatActivity {
                 CancelRequestBtn.setVisibility(View.INVISIBLE);
                 ConfirmRequestBtn.setVisibility(View.INVISIBLE);
                 RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileYouAreFriend.setVisibility(View.INVISIBLE);
                 UserProfileStar.setVisibility(View.INVISIBLE);
+                UnFriendPerson.setVisibility(View.INVISIBLE);
 
                 //delete the request
                 FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue();
                 FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).removeValue();
-
-
 
                 Toast.makeText(UserProfileActivity.this,"You canceled Friend Request",Toast.LENGTH_SHORT).show();
 
@@ -135,14 +139,15 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
         ConfirmRequestBtn.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
                 SendRequestBtn.setVisibility(View.INVISIBLE);
                 CancelRequestBtn.setVisibility(View.INVISIBLE);
                 ConfirmRequestBtn.setVisibility(View.INVISIBLE);
                 RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileYouAreFriend.setVisibility(View.VISIBLE);
                 UserProfileStar.setVisibility(View.VISIBLE);
+                UnFriendPerson.setVisibility(View.VISIBLE);
 
                 mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId);
                 mDatabaseReference.child("requestState").setValue("friends");
@@ -153,10 +158,11 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
                 //add the two users to friends child
+                String FriendRequestDate = new SimpleDateFormat("dd MMM yyyy").format(Calendar.getInstance().getTime());
                 mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId).child(UserId);
-                mDatabaseReference.setValue("Friends");
+                mDatabaseReference.setValue(FriendRequestDate);
                 mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("friends").child(UserId).child(CurrentUId);
-                mDatabaseReference.setValue("Friends");
+                mDatabaseReference.setValue(FriendRequestDate);
                 onStart();
             }
         });
@@ -169,8 +175,8 @@ public class UserProfileActivity extends AppCompatActivity {
                 CancelRequestBtn.setVisibility(View.INVISIBLE);
                 ConfirmRequestBtn.setVisibility(View.INVISIBLE);
                 RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileYouAreFriend.setVisibility(View.INVISIBLE);
                 UserProfileStar.setVisibility(View.INVISIBLE);
+                UnFriendPerson.setVisibility(View.INVISIBLE);
 
                 //delete the request
                 FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue();
@@ -178,6 +184,30 @@ public class UserProfileActivity extends AppCompatActivity {
 
                 Toast.makeText(UserProfileActivity.this,"You rejected Friend Request",Toast.LENGTH_SHORT).show();
 
+            }
+        });
+
+
+        UnFriendPerson.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SendRequestBtn.setVisibility(View.VISIBLE);
+                CancelRequestBtn.setVisibility(View.INVISIBLE);
+                ConfirmRequestBtn.setVisibility(View.INVISIBLE);
+                RejectRequestBtn.setVisibility(View.INVISIBLE);
+                UserProfileStar.setVisibility(View.INVISIBLE);
+                UnFriendPerson.setVisibility(View.INVISIBLE);
+
+                //delete the two friends
+                FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId).child(UserId).removeValue();
+                FirebaseDatabase.getInstance().getReference().child("friends").child(UserId).child(CurrentUId).removeValue();
+
+                //delete the two requests
+                FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue();
+                FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).removeValue();
+
+                Toast.makeText(UserProfileActivity.this,"You UnFriend this person",Toast.LENGTH_SHORT).show();
+                onStart();
             }
         });
 
@@ -203,8 +233,8 @@ public class UserProfileActivity extends AppCompatActivity {
                     CancelRequestBtn.setVisibility(View.INVISIBLE);
                     ConfirmRequestBtn.setVisibility(View.INVISIBLE);
                     RejectRequestBtn.setVisibility(View.INVISIBLE);
-                    UserProfileYouAreFriend.setVisibility(View.INVISIBLE);
                     UserProfileStar.setVisibility(View.INVISIBLE);
+                    UnFriendPerson.setVisibility(View.INVISIBLE);
                 }
             }
             @Override
@@ -224,11 +254,11 @@ public class UserProfileActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                   for(DataSnapshot Snapshot: dataSnapshot.getChildren()){
                       numOfUsers++;}
-                  if(numOfUsers==1)UserTotalFriendsView.setText("Total friends: "+String.valueOf(numOfUsers)+" friend");
-                   else UserTotalFriendsView.setText("Total friends: "+String.valueOf(numOfUsers)+" friends");
+                  if(numOfUsers==1)UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friend");
+                   else UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friends");
                 }
                 else{
-                   UserTotalFriendsView.setText("Total friends: "+String.valueOf(numOfUsers)+" friends");
+                   UserTotalFriendsView.setText(" 0 friends");
                 }
             }
             @Override
@@ -256,15 +286,14 @@ public class UserProfileActivity extends AppCompatActivity {
                         CancelRequestBtn.setVisibility(View.VISIBLE);
                         ConfirmRequestBtn.setVisibility(View.INVISIBLE);
                         RejectRequestBtn.setVisibility(View.INVISIBLE);
-                        UserProfileYouAreFriend.setVisibility(View.INVISIBLE);
                         UserProfileStar.setVisibility(View.INVISIBLE);
+                        UnFriendPerson.setVisibility(View.INVISIBLE);
                     }
                     else if(UserState.equals("received")){
                         SendRequestBtn.setVisibility(View.INVISIBLE);
                         CancelRequestBtn.setVisibility(View.INVISIBLE);
                         ConfirmRequestBtn.setVisibility(View.VISIBLE);
                         RejectRequestBtn.setVisibility(View.VISIBLE);
-                        UserProfileYouAreFriend.setVisibility(View.INVISIBLE);
                         UserProfileStar.setVisibility(View.INVISIBLE);
                     }
                     else if(UserState.equals("friends")){
@@ -272,8 +301,8 @@ public class UserProfileActivity extends AppCompatActivity {
                         CancelRequestBtn.setVisibility(View.INVISIBLE);
                         ConfirmRequestBtn.setVisibility(View.INVISIBLE);
                         RejectRequestBtn.setVisibility(View.INVISIBLE);
-                        UserProfileYouAreFriend.setVisibility(View.VISIBLE);
                         UserProfileStar.setVisibility(View.VISIBLE);
+                        UnFriendPerson.setVisibility(View.VISIBLE);
                     }
 
                 }

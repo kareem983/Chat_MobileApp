@@ -89,9 +89,6 @@ public class AllUsersActivity extends AppCompatActivity {
         });
 
 
-
-
-
     }
 
 

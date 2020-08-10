@@ -30,12 +30,35 @@
         android:id="@+id/UserProfile_ToolBar"/>
 
 
+    <ImageView
+        android:id="@+id/UserProfileFriendsIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/UserProfileImage"
+        android:layout_marginTop="43dp"
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/friends"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:id="@+id/UserProfileTotalFriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/UserProfileImage"
+        android:layout_toRightOf="@id/UserProfileFriendsIcon"
+        android:layout_marginTop="45dp"
+        android:layout_marginLeft="10dp"
+        android:text=""
+        android:textColor="#FFF"
+        android:textSize="18sp"/>
+
+
     <TextView
         android:id="@+id/UserProfileName"
         android:layout_width="match_parent"
         android:layout_height="38sp"
-        android:layout_below="@id/UserProfileImage"
-        android:layout_marginTop="50dp"
+        android:layout_below="@id/UserProfileTotalFriend"
+        android:layout_marginTop="20dp"
         android:text=""
         android:gravity="center"
         android:textColor="#FFF"
@@ -54,17 +77,6 @@
         android:textColor="#FFF"
         android:textSize="18sp"/>
 
-
-    <TextView
-        android:id="@+id/UserProfileTotalFriend"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/UserProfileStatus"
-        android:layout_marginTop="105dp"
-        android:text=""
-        android:gravity="center"
-        android:textColor="#FFF"
-        android:textSize="18sp"/>
 
 
     <Button
@@ -100,6 +112,22 @@
 
 
     <Button
+        android:id="@+id/UserProfileUnFriendRequestBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button3"
+        android:text="UnFriend this person"
+        android:textColor="#FFF"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginBottom="55dp"
+        android:visibility="invisible"/>
+
+
+    <Button
         android:id="@+id/UserProfileConfirmRequestBtn"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
@@ -113,7 +141,6 @@
         android:padding="10dp"
         android:layout_marginBottom="105dp"
         android:visibility="invisible"/>
-
 
 
     <Button
@@ -132,15 +159,6 @@
         android:visibility="invisible"/>
 
 
-    <ImageView
-        android:id="@+id/UserProfileYouAreFriend"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-15dp"
-        android:gravity="center"
-        android:src="@drawable/friends"
-        android:visibility="invisible"/>
 
 
 </RelativeLayout>
