@@ -11,8 +11,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".UserProfileActivity"
-            android:parentActivityName=".AllUsersActivity"></activity>
+        <activity android:name=".FriendsChattingActivity"
+            android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".RequestProfileActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".UserProfileActivity"
+            android:parentActivityName=".AllUsersActivity" />
         <activity
             android:name=".AllUsersActivity"
             android:parentActivityName=".MainActivity" />

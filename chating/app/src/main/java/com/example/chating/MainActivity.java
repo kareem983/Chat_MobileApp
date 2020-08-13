@@ -1,9 +1,11 @@
 package com.example.chating;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -14,6 +16,9 @@ import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+
 import androidx.viewpager.widget.ViewPager;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private SectionPagerAdapter mPagerAdapter;
 
 
+    public static boolean isFinished;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
+
     }
 
 
@@ -52,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
+
+        isFinished=true;
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -60,8 +69,30 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
+        else{
+            String CurrentUID = currentUser.getUid();
+            FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Online").setValue("true");
+            FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Seen").setValue("online");
+        }
+
     }
 
+
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if(isFinished) {
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            if (currentUser != null) {
+                String CurrentUID = currentUser.getUid();
+                FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Online").setValue(ServerValue.TIMESTAMP);
+                FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Seen").setValue("offline");
+            }
+        }
+    }
 
 
 
@@ -85,13 +116,43 @@ public class MainActivity extends AppCompatActivity {
         }
 
         else if(id == R.id.Logout_id){
-            FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(MainActivity.this,WelcomeActivity.class);
-            startActivity(intent);
-            finish();
+            CheckIfLogOutOrNot();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+
+
+    private void CheckIfLogOutOrNot(){
+        //create the AlertDialog then check the user choose yes or no
+        AlertDialog.Builder checkAlert = new AlertDialog.Builder(MainActivity.this);
+        checkAlert.setMessage("Do you want to Log out?")
+                .setCancelable(false).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseUser currentUser = mAuth.getCurrentUser();
+                String CurrentUID = currentUser.getUid();
+                FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Online").setValue(ServerValue.TIMESTAMP);
+                FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Seen").setValue("offline");
+
+                FirebaseAuth.getInstance().signOut();
+                Intent intent = new Intent(MainActivity.this,WelcomeActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog alert = checkAlert.create();
+        alert.setTitle("Log Out");
+        alert.show();
+
     }
 
 

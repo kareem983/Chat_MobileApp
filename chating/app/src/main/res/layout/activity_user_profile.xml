@@ -14,7 +14,8 @@
         android:layout_height="320dp"
         android:layout_centerHorizontal="true"
         android:scaleX="1.4"
-        android:scaleY="1.15"/>
+        android:scaleY="1.15"
+        android:layout_alignParentTop="true"/>
 
     <ImageView
         android:id="@+id/UserProfileStar"
@@ -24,7 +25,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="-12dp"
         android:src="@drawable/star"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
     <include layout="@layout/app_bar_layout4"
         android:id="@+id/UserProfile_ToolBar"/>
@@ -92,7 +93,7 @@
         android:textSize="18sp"
         android:padding="10dp"
         android:layout_marginBottom="55dp"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 
     <Button
@@ -108,7 +109,7 @@
         android:textSize="18sp"
         android:padding="10dp"
         android:layout_marginBottom="55dp"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 
     <Button
@@ -124,7 +125,7 @@
         android:textSize="18sp"
         android:padding="10dp"
         android:layout_marginBottom="55dp"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 
     <Button
@@ -140,7 +141,7 @@
         android:textSize="18sp"
         android:padding="10dp"
         android:layout_marginBottom="105dp"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 
     <Button
@@ -156,7 +157,7 @@
         android:textSize="18sp"
         android:padding="10dp"
         android:layout_marginBottom="40dp"
-        android:visibility="invisible"/>
+        android:visibility="gone"/>
 
 
 

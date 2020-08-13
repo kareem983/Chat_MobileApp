@@ -38,6 +38,7 @@ public class AllUsersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_users);
+
         mAuth=FirebaseAuth.getInstance();
         currentUser=mAuth.getCurrentUser();
         final String UId=currentUser.getUid();
@@ -51,9 +52,32 @@ public class AllUsersActivity extends AppCompatActivity {
         //listView
         usersListView= (ListView)findViewById(R.id.AllUsers_ListView_id);
 
-
         UsersId=new ArrayList<>();
         UsersArrayList=new ArrayList<>();
+
+        final UsersAdapter adapter=new UsersAdapter(AllUsersActivity.this,UsersArrayList);
+        usersListView.setAdapter(adapter);
+
+
+        //save users IDs in Users ArrayList to enable me to take the user's data to display them
+        DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("users");
+        ValueEventListener eventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    UsersId.clear();
+                    for( DataSnapshot Snapshot: dataSnapshot.getChildren()){
+                        //to not add my account to all users
+                        if(!Snapshot.getKey().equals(UId)) UsersId.add(Snapshot.getKey().toString());
+                    }
+                    sentUserDataToArrayAdapter();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
 
 
 
@@ -70,24 +94,6 @@ public class AllUsersActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-
-
-        //save users IDs in Users ArrayList to enable me to take the user's data to display them
-        mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("users");
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for( DataSnapshot Snapshot: snapshot.getChildren()){
-                    //to not add my account to all users
-                    if(!Snapshot.getKey().equals(UId)) UsersId.add(Snapshot.getKey().toString());
-                }
-                sentUserDataToArrayAdapter();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
-
 
     }
 

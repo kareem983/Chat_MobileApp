@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.ProgressDialog;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,8 @@ import java.util.Date;
 
 public class UserProfileActivity extends AppCompatActivity {
     private Toolbar mToolBar;
+    private ProgressDialog mProgressDialog;
+
     private ImageView UserImageView;
     private TextView UserNameView;
     private TextView UserStatusView;
@@ -58,8 +61,14 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
         mAuth=FirebaseAuth.getInstance();
         currentUser=mAuth.getCurrentUser();
-
         CurrentUId=currentUser.getUid();
+
+        //retrieve User data from the previous Activity
+        UserId=getIntent().getStringExtra("User Id");
+        UserName=getIntent().getStringExtra("User Name");
+        UserStatus=getIntent().getStringExtra("User Status");
+        UserImage=getIntent().getStringExtra("User Image");
+
 
         //tool bar
         mToolBar= (Toolbar)findViewById(R.id.UserProfile_ToolBar);
@@ -82,18 +91,14 @@ public class UserProfileActivity extends AppCompatActivity {
         UnFriendPerson=(Button)findViewById(R.id.UserProfileUnFriendRequestBtn);
 
 
-        //retrieve User data from the previous Activity
-        UserId=getIntent().getStringExtra("User Id");
-        UserName=getIntent().getStringExtra("User Name");
-        UserStatus=getIntent().getStringExtra("User Status");
-        UserImage=getIntent().getStringExtra("User Image");
-
         //display user data
         UserNameView.setText(UserName);
         UserStatusView.setText(UserStatus);
         Picasso.get().load(UserImage).placeholder(R.drawable.userr).into(UserImageView);
 
-
+        FirebaseDatabase.getInstance().getReference().child("requests").child("1").setValue("1");
+        FirebaseDatabase.getInstance().getReference().child("friends").child("1").setValue("1");
+        FirebaseDatabase.getInstance().getReference().child("chats").child("1").setValue("1");
 
 
 
@@ -101,18 +106,15 @@ public class UserProfileActivity extends AppCompatActivity {
         SendRequestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SendRequestBtn.setVisibility(View.INVISIBLE);
+                SendRequestBtn.setVisibility(View.GONE);
                 CancelRequestBtn.setVisibility(View.VISIBLE);
-                ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileStar.setVisibility(View.INVISIBLE);
-                UnFriendPerson.setVisibility(View.INVISIBLE);
+                ConfirmRequestBtn.setVisibility(View.GONE);
+                RejectRequestBtn.setVisibility(View.GONE);
+                UserProfileStar.setVisibility(View.GONE);
+                UnFriendPerson.setVisibility(View.GONE);
 
-                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId);
-                mDatabaseReference.child("requestState").setValue("received");
-                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId);
-                mDatabaseReference.child("requestState").setValue("sent");
-
+                FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).child("requestState").setValue("received");
+                FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).child("requestState").setValue("sent");
 
                 Toast.makeText(UserProfileActivity.this,"You sent Friend Request",Toast.LENGTH_SHORT).show();
             }
@@ -122,11 +124,11 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SendRequestBtn.setVisibility(View.VISIBLE);
-                CancelRequestBtn.setVisibility(View.INVISIBLE);
-                ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileStar.setVisibility(View.INVISIBLE);
-                UnFriendPerson.setVisibility(View.INVISIBLE);
+                CancelRequestBtn.setVisibility(View.GONE);
+                ConfirmRequestBtn.setVisibility(View.GONE);
+                RejectRequestBtn.setVisibility(View.GONE);
+                UserProfileStar.setVisibility(View.GONE);
+                UnFriendPerson.setVisibility(View.GONE);
 
                 //delete the request
                 FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue();
@@ -138,32 +140,53 @@ public class UserProfileActivity extends AppCompatActivity {
         });
 
 
+
+
         ConfirmRequestBtn.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
-                SendRequestBtn.setVisibility(View.INVISIBLE);
-                CancelRequestBtn.setVisibility(View.INVISIBLE);
-                ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                RejectRequestBtn.setVisibility(View.INVISIBLE);
+                SendRequestBtn.setVisibility(View.GONE);
+                CancelRequestBtn.setVisibility(View.GONE);
+                ConfirmRequestBtn.setVisibility(View.GONE);
+                RejectRequestBtn.setVisibility(View.GONE);
                 UserProfileStar.setVisibility(View.VISIBLE);
                 UnFriendPerson.setVisibility(View.VISIBLE);
 
-                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId);
-                mDatabaseReference.child("requestState").setValue("friends");
-                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId);
-                mDatabaseReference.child("requestState").setValue("friends");
+                //display progress dialog
+                mProgressDialog=new ProgressDialog(UserProfileActivity.this);
+                mProgressDialog.setTitle("Confirmation process");
+                mProgressDialog.setMessage("Please wait while we add your new friend");
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
 
-                Toast.makeText(UserProfileActivity.this,"You became Friends",Toast.LENGTH_SHORT).show();
+
+                //confirm the request
+                FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).child("requestState").setValue("friends").addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).child("requestState").setValue("friends").addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mProgressDialog.dismiss();
+                                Toast.makeText(UserProfileActivity.this,"You became Friends",Toast.LENGTH_SHORT).show();
+                                UpdateNumOfFriends();
+                            }
+                        });
+                    }
+                });
+
+                //add friends
+                FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId).child(UserId).setValue(new SimpleDateFormat("dd MMM yyyy HH:mm a").format(Calendar.getInstance().getTime()));
+                FirebaseDatabase.getInstance().getReference().child("friends").child(UserId).child(CurrentUId).setValue(new SimpleDateFormat("dd MMM yyyy HH:mm a").format(Calendar.getInstance().getTime()));
+
+                //add chats child
+                FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUId).child(UserId).setValue("");
+                FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUId).setValue("");
 
 
-                //add the two users to friends child
-                String FriendRequestDate = new SimpleDateFormat("dd MMM yyyy").format(Calendar.getInstance().getTime());
-                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId).child(UserId);
-                mDatabaseReference.setValue(FriendRequestDate);
-                mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("friends").child(UserId).child(CurrentUId);
-                mDatabaseReference.setValue(FriendRequestDate);
-                onStart();
+
+
             }
         });
 
@@ -172,17 +195,33 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SendRequestBtn.setVisibility(View.VISIBLE);
-                CancelRequestBtn.setVisibility(View.INVISIBLE);
-                ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileStar.setVisibility(View.INVISIBLE);
-                UnFriendPerson.setVisibility(View.INVISIBLE);
+                CancelRequestBtn.setVisibility(View.GONE);
+                ConfirmRequestBtn.setVisibility(View.GONE);
+                RejectRequestBtn.setVisibility(View.GONE);
+                UserProfileStar.setVisibility(View.GONE);
+                UnFriendPerson.setVisibility(View.GONE);
+
+                //display progress dialog
+                mProgressDialog=new ProgressDialog(UserProfileActivity.this);
+                mProgressDialog.setTitle("Rejection process");
+                mProgressDialog.setMessage("Please wait while we reject the friend request");
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
 
                 //delete the request
-                FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue();
-                FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).removeValue();
+                FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                mProgressDialog.dismiss();
+                                Toast.makeText(UserProfileActivity.this,"You rejected Friend Request",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
 
-                Toast.makeText(UserProfileActivity.this,"You rejected Friend Request",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -192,26 +231,54 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SendRequestBtn.setVisibility(View.VISIBLE);
-                CancelRequestBtn.setVisibility(View.INVISIBLE);
-                ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                RejectRequestBtn.setVisibility(View.INVISIBLE);
-                UserProfileStar.setVisibility(View.INVISIBLE);
-                UnFriendPerson.setVisibility(View.INVISIBLE);
+                CancelRequestBtn.setVisibility(View.GONE);
+                ConfirmRequestBtn.setVisibility(View.GONE);
+                RejectRequestBtn.setVisibility(View.GONE);
+                UserProfileStar.setVisibility(View.GONE);
+                UnFriendPerson.setVisibility(View.GONE);
 
-                //delete the two friends
-                FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId).child(UserId).removeValue();
-                FirebaseDatabase.getInstance().getReference().child("friends").child(UserId).child(CurrentUId).removeValue();
+                //display progress dialog
+                mProgressDialog=new ProgressDialog(UserProfileActivity.this);
+                mProgressDialog.setTitle("Deleting Friendship");
+                mProgressDialog.setMessage("Please wait while we delete the friendship");
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
 
                 //delete the two requests
-                FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue();
-                FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).removeValue();
+                FirebaseDatabase.getInstance().getReference().child("requests").child(CurrentUId).child(UserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        FirebaseDatabase.getInstance().getReference().child("requests").child(UserId).child(CurrentUId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                //delete the two friends
+                                FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId).child(UserId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        FirebaseDatabase.getInstance().getReference().child("friends").child(UserId).child(CurrentUId).removeValue().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                mProgressDialog.dismiss();
+                                                Toast.makeText(UserProfileActivity.this,"You UnFriend this person",Toast.LENGTH_SHORT).show();
+                                                UpdateNumOfFriends();
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
 
-                Toast.makeText(UserProfileActivity.this,"You UnFriend this person",Toast.LENGTH_SHORT).show();
-                onStart();
+                //delete chats child
+                FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUId).child(UserId).removeValue();
+                FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUId).removeValue();
+
             }
         });
 
     }
+
 
 
     @Override
@@ -230,11 +297,11 @@ public class UserProfileActivity extends AppCompatActivity {
                 }
                 else{
                     SendRequestBtn.setVisibility(View.VISIBLE);
-                    CancelRequestBtn.setVisibility(View.INVISIBLE);
-                    ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                    RejectRequestBtn.setVisibility(View.INVISIBLE);
-                    UserProfileStar.setVisibility(View.INVISIBLE);
-                    UnFriendPerson.setVisibility(View.INVISIBLE);
+                    CancelRequestBtn.setVisibility(View.GONE);
+                    ConfirmRequestBtn.setVisibility(View.GONE);
+                    RejectRequestBtn.setVisibility(View.GONE);
+                    UserProfileStar.setVisibility(View.GONE);
+                    UnFriendPerson.setVisibility(View.GONE);
                 }
             }
             @Override
@@ -244,31 +311,9 @@ public class UserProfileActivity extends AppCompatActivity {
         //******************************************************************************************
 
 
-        //******************************************************************************************
-        //number of friends
-        DatabaseReference Root=FirebaseDatabase.getInstance().getReference();
-        DatabaseReference x=Root.child("friends").child(UserId);
-        ValueEventListener EventListener= new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                  for(DataSnapshot Snapshot: dataSnapshot.getChildren()){
-                      numOfUsers++;}
-                  if(numOfUsers==1)UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friend");
-                   else UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friends");
-                }
-                else{
-                   UserTotalFriendsView.setText(" 0 friends");
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };
-        x.addListenerForSingleValueEvent(EventListener);
-        //******************************************************************************************
+        UpdateNumOfFriends();
 
     }
-
 
 
 
@@ -282,25 +327,26 @@ public class UserProfileActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     String UserState= dataSnapshot.getValue().toString();
                     if(UserState.equals("sent")){
-                        SendRequestBtn.setVisibility(View.INVISIBLE);
+                        SendRequestBtn.setVisibility(View.GONE);
                         CancelRequestBtn.setVisibility(View.VISIBLE);
-                        ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                        RejectRequestBtn.setVisibility(View.INVISIBLE);
-                        UserProfileStar.setVisibility(View.INVISIBLE);
-                        UnFriendPerson.setVisibility(View.INVISIBLE);
+                        ConfirmRequestBtn.setVisibility(View.GONE);
+                        RejectRequestBtn.setVisibility(View.GONE);
+                        UserProfileStar.setVisibility(View.GONE);
+                        UnFriendPerson.setVisibility(View.GONE);
                     }
                     else if(UserState.equals("received")){
-                        SendRequestBtn.setVisibility(View.INVISIBLE);
-                        CancelRequestBtn.setVisibility(View.INVISIBLE);
+                        SendRequestBtn.setVisibility(View.GONE);
+                        CancelRequestBtn.setVisibility(View.GONE);
                         ConfirmRequestBtn.setVisibility(View.VISIBLE);
                         RejectRequestBtn.setVisibility(View.VISIBLE);
-                        UserProfileStar.setVisibility(View.INVISIBLE);
+                        UserProfileStar.setVisibility(View.GONE);
+                        UnFriendPerson.setVisibility(View.GONE);
                     }
                     else if(UserState.equals("friends")){
-                        SendRequestBtn.setVisibility(View.INVISIBLE);
-                        CancelRequestBtn.setVisibility(View.INVISIBLE);
-                        ConfirmRequestBtn.setVisibility(View.INVISIBLE);
-                        RejectRequestBtn.setVisibility(View.INVISIBLE);
+                        SendRequestBtn.setVisibility(View.GONE);
+                        CancelRequestBtn.setVisibility(View.GONE);
+                        ConfirmRequestBtn.setVisibility(View.GONE);
+                        RejectRequestBtn.setVisibility(View.GONE);
                         UserProfileStar.setVisibility(View.VISIBLE);
                         UnFriendPerson.setVisibility(View.VISIBLE);
                     }
@@ -314,5 +360,30 @@ public class UserProfileActivity extends AppCompatActivity {
 
     }
 
+
+
+    private void UpdateNumOfFriends(){
+        //number of friends
+        DatabaseReference Root=FirebaseDatabase.getInstance().getReference();
+        DatabaseReference x=Root.child("friends").child(UserId);
+        ValueEventListener EventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot Snapshot: dataSnapshot.getChildren()){numOfUsers++;}
+
+                    if(numOfUsers==1)UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friend");
+                    else UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friends");
+                }
+                else{
+                    UserTotalFriendsView.setText(" 0 friends");
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        x.addListenerForSingleValueEvent(EventListener);
+
+    }
 
 }

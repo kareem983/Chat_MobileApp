@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RequestProfileActivity"
+    android:background="#121111">
+
+    <ImageView
+        android:id="@+id/RequestProfileImage"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_centerHorizontal="true"
+        android:scaleX="1.4"
+        android:scaleY="1.15"/>
+
+    <include layout="@layout/app_bar_layout4"
+        android:id="@+id/RequestProfile_ToolBar"/>
+
+
+    <ImageView
+        android:id="@+id/RequestProfileFriendsIcon"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_below="@id/RequestProfileImage"
+        android:layout_marginTop="43dp"
+        android:layout_marginLeft="15dp"
+        android:src="@drawable/friends"
+        android:layout_alignParentLeft="true"/>
+
+    <TextView
+        android:id="@+id/RequestProfileTotalFriend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/RequestProfileImage"
+        android:layout_toRightOf="@id/RequestProfileFriendsIcon"
+        android:layout_marginTop="45dp"
+        android:layout_marginLeft="10dp"
+        android:text=""
+        android:textColor="#FFF"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/RequestProfileName"
+        android:layout_width="match_parent"
+        android:layout_height="38sp"
+        android:layout_below="@id/RequestProfileTotalFriend"
+        android:layout_marginTop="20dp"
+        android:text=""
+        android:gravity="center"
+        android:textColor="#FFF"
+        android:textStyle="bold"
+        android:textSize="25sp"/>
+
+
+    <TextView
+        android:id="@+id/RequestProfileStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/RequestProfileName"
+        android:layout_marginTop="10dp"
+        android:text=""
+        android:gravity="center"
+        android:textColor="#FFF"
+        android:textSize="18sp"/>
+
+
+    <Button
+        android:id="@+id/RequestProfileConfirmRequestBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button4"
+        android:text="Confirm friend request"
+        android:textColor="@color/colorPrimary"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginBottom="105dp"/>
+
+
+    <Button
+        android:id="@+id/RequestProfileRejectRequestBtn"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button3"
+        android:text="Reject friend request"
+        android:textColor="#FFF"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:padding="10dp"
+        android:layout_marginBottom="40dp"/>
+
+
+</RelativeLayout>

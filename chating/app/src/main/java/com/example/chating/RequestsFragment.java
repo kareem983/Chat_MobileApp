@@ -1,5 +1,6 @@
 package com.example.chating;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -71,7 +73,6 @@ public class RequestsFragment extends Fragment {
 
 
 
-
         return mMainView;
     }
 
@@ -89,6 +90,22 @@ public class RequestsFragment extends Fragment {
         UsersId=new ArrayList<>();
         UsersArrayList=new ArrayList<>();
 
+
+        //if the user click to any user contact
+        UserRequestListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Users User= UsersArrayList.get(i);
+                Intent intent = new Intent(getActivity(),RequestProfileActivity.class);
+                intent.putExtra("User Id",User.getUserId());
+                intent.putExtra("User Name",User.getUserName());
+                intent.putExtra("User Status",User.getUserStatus());
+                intent.putExtra("User Image",User.getUserImage());
+                startActivity(intent);
+            }
+        });
+
+
         //check if the current user have requests or not
         DatabaseReference root= FirebaseDatabase.getInstance().getReference();
         DatabaseReference m=root.child("requests").child(CurrentUId);
@@ -96,13 +113,25 @@ public class RequestsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
+                    UsersId.clear();
+                    UsersArrayList.clear();
+                    final UsersAdapter adapter=new UsersAdapter(getActivity(),UsersArrayList);
+                    UserRequestListView.setAdapter(adapter);
                     checkTheRequestState();
+                }
+                else{
+                    //to not display any friend request because the user doesn't have any friend request
+                    UsersId.clear();
+                    UsersArrayList.clear();
+                    final UsersAdapter adapter=new UsersAdapter(getActivity(),UsersArrayList);
+                    UserRequestListView.setAdapter(adapter);
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
         m.addListenerForSingleValueEvent(eventListener);
+
 
 
     }

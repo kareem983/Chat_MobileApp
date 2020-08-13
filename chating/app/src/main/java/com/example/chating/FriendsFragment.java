@@ -1,5 +1,6 @@
 package com.example.chating;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -8,7 +9,9 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,8 +33,8 @@ public class FriendsFragment extends Fragment {
     private String mParam2;
 
     //my variables
-    private ArrayList<String> UsersId;
-    private ArrayList <Users>UsersArrayList;
+    private ArrayList<String> FriendsId;
+    private ArrayList <Friends>FriendsArrayList;
     private ArrayList <String>FriendsDates;
 
     private ListView UserFriendsListView;
@@ -75,7 +78,6 @@ public class FriendsFragment extends Fragment {
         UserFriendsListView=(ListView)mMainView.findViewById(R.id.UserFriends_ListView_id);
 
 
-
         return mMainView;
     }
 
@@ -83,16 +85,30 @@ public class FriendsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
         //firebase
         mAuth=FirebaseAuth.getInstance();
         currentUser=mAuth.getCurrentUser();
         CurrentUId=currentUser.getUid();
 
         //define array lists
-        UsersId=new ArrayList<>();
-        UsersArrayList=new ArrayList<>();
+        FriendsId=new ArrayList<>();
+        FriendsArrayList=new ArrayList<>();
         FriendsDates=new ArrayList<>();
+
+        //if the user click to any friend contact
+        UserFriendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Friends friend= FriendsArrayList.get(i);
+                Intent intent = new Intent(getActivity(),FriendsChattingActivity.class);
+                intent.putExtra("User Id",friend.getFriendId());
+                intent.putExtra("User Name",friend.getFriendName());
+                intent.putExtra("User Image",friend.getFriendImage());
+                startActivity(intent);
+            }
+        });
+
+
 
         //check if the current user have requests or not
         DatabaseReference root= FirebaseDatabase.getInstance().getReference();
@@ -101,7 +117,20 @@ public class FriendsFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
+                    FriendsId.clear();
+                    FriendsDates.clear();
+                    FriendsArrayList.clear();
+                    final FriendsAdapter adapter=new FriendsAdapter(getActivity(),FriendsArrayList);
+                    UserFriendsListView.setAdapter(adapter);
                     checkTheFriends();
+                }
+                else{
+                    //to not display any friend because the user doesn't have any friend
+                    FriendsId.clear();
+                    FriendsDates.clear();
+                    FriendsArrayList.clear();
+                    final FriendsAdapter adapter=new FriendsAdapter(getActivity(),FriendsArrayList);
+                    UserFriendsListView.setAdapter(adapter);
                 }
             }
             @Override
@@ -112,14 +141,14 @@ public class FriendsFragment extends Fragment {
 
 
     private void checkTheFriends(){
-        UsersId.clear();
+        FriendsId.clear();
         FriendsDates.clear();
         mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId);
         mDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for( DataSnapshot Snapshot: snapshot.getChildren()){
-                        UsersId.add(Snapshot.getKey().toString());
+                        FriendsId.add(Snapshot.getKey().toString());
                         FriendsDates.add(Snapshot.getValue().toString());
                 }
                 sentUserDataToArrayAdapter();
@@ -131,19 +160,21 @@ public class FriendsFragment extends Fragment {
 
 
     private void sentUserDataToArrayAdapter(){
-        UsersArrayList.clear();
-        final UsersAdapter adapter=new UsersAdapter(getActivity(),UsersArrayList);
+        FriendsArrayList.clear();
+        final FriendsAdapter adapter=new FriendsAdapter(getActivity(),FriendsArrayList);
 
-        for(int i=0;i<UsersId.size();i++){
+        for(int i=0;i<FriendsId.size();i++){
             final String FriendshipDate = FriendsDates.get(i);
-            mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("users").child(UsersId.get(i));
+            mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("users").child(FriendsId.get(i));
             mDatabaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     String name = snapshot.child("Name").getValue().toString();
                     String image = snapshot.child("Image").getValue().toString();
+                    String OnLine = snapshot.child("Online").getValue().toString();
+                    if(OnLine.equals("true"))FriendsArrayList.add(new Friends(name,FriendshipDate,image,snapshot.getKey(),true));
+                    else FriendsArrayList.add(new Friends(name,FriendshipDate,image,snapshot.getKey(),false));
 
-                    UsersArrayList.add(new Users(name,FriendshipDate,image,snapshot.getKey()));
                     adapter.notifyDataSetChanged();
                 }
 
