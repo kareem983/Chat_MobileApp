@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,6 +40,7 @@ public class ChatsFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String CurrentUId;
+    private String FinalMessage="";
 
 
 
@@ -104,7 +106,7 @@ public class ChatsFragment extends Fragment {
         });
 
 
-        //check if the current user have requests or not
+        //check if the current user have friends or not
         DatabaseReference root= FirebaseDatabase.getInstance().getReference();
         DatabaseReference m=root.child("friends").child(CurrentUId);
         ValueEventListener eventListener= new ValueEventListener() {
@@ -135,18 +137,23 @@ public class ChatsFragment extends Fragment {
 
     private void checkTheFriends(){
         UsersId.clear();
-        mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId);
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
+
+        DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("friends").child(CurrentUId);
+        ValueEventListener eventListener= new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for( DataSnapshot Snapshot: snapshot.getChildren()){
-                    UsersId.add(Snapshot.getKey().toString());
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for( DataSnapshot Snapshot: dataSnapshot.getChildren()){
+                        UsersId.add(Snapshot.getKey().toString());
+                    }
+                    sentUserDataToArrayAdapter();
                 }
-                sentUserDataToArrayAdapter();
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
     }
 
 
@@ -155,25 +162,51 @@ public class ChatsFragment extends Fragment {
         final FriendsAdapter adapter=new FriendsAdapter(getActivity(),UsersArrayList);
 
         for(int i=0;i<UsersId.size();i++){
-            mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("users").child(UsersId.get(i));
-            mDatabaseReference.addValueEventListener(new ValueEventListener() {
+            getFinalMessage(UsersId.get(i));
+            DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+            DatabaseReference m=root.child("users").child(UsersId.get(i));
+            ValueEventListener eventListener= new ValueEventListener() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    String name = snapshot.child("Name").getValue().toString();
-                    String image = snapshot.child("Image").getValue().toString();
-                    String OnLine = snapshot.child("Online").getValue().toString();
-                    if(OnLine.equals("true"))UsersArrayList.add(new Friends(name,"FinalMsg",image,snapshot.getKey(),true));
-                    else UsersArrayList.add(new Friends(name,"FinalMsg",image,snapshot.getKey(),false));
-
-                    adapter.notifyDataSetChanged();
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        String name = dataSnapshot.child("Name").getValue().toString();
+                        String image = dataSnapshot.child("Image").getValue().toString();
+                        String OnLine = dataSnapshot.child("Online").getValue().toString();
+                        if(OnLine.equals("true"))UsersArrayList.add(new Friends(name,FinalMessage,image,dataSnapshot.getKey(),true));
+                        else UsersArrayList.add(new Friends(name,FinalMessage,image,dataSnapshot.getKey(),false));
+                        FinalMessage="";
+                        adapter.notifyDataSetChanged();
+                    }
                 }
-
                 @Override
-                public void onCancelled(@NonNull DatabaseError error) {}
-            });
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
+            };
+            m.addListenerForSingleValueEvent(eventListener);
 
         }
         UserChatsListView.setAdapter(adapter);
+
+    }
+
+
+    private void getFinalMessage(String UserId){
+        FinalMessage="";
+        DatabaseReference root= FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("chats").child(CurrentUId).child(UserId);
+        ValueEventListener eventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot Snapshot : dataSnapshot.getChildren()){
+                        if(Snapshot.child("Message Type").getValue().equals("Image")) FinalMessage="Image";
+                        else FinalMessage=Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length());
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
 
     }
 

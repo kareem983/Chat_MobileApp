@@ -24,36 +24,49 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/FriendsChatting_TooBar"
-        android:paddingBottom="55dp"/>
+        android:paddingBottom="60dp"/>
 
     <LinearLayout
         android:id="@+id/SendContainer"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true">
 
+        <ImageButton
+            android:id="@+id/AddImageBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/add"
+            android:layout_gravity="bottom"
+            android:background="@android:color/transparent"
+            android:layout_marginLeft="5dp"/>
 
         <EditText
             android:id="@+id/messageEdit"
-            android:layout_width="340dp"
-            android:layout_height="40dp"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:maxHeight="135dp"
+            android:minHeight="45dp"
             android:background="@drawable/button4"
             android:hint="Type a message"
             android:layout_marginLeft="2dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:layout_gravity="top"/>
-
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_marginTop="2dp"/>
 
         <ImageButton
             android:id="@+id/sendBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/send_btn"
-            android:background="@android:color/transparent"
-            android:layout_marginTop="2dp"/>
+            android:src="@drawable/send"
+            android:layout_gravity="bottom"
+            android:background="@android:color/transparent"/>
 
     </LinearLayout>
+
+
 
 </RelativeLayout>

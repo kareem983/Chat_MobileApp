@@ -18,7 +18,7 @@
         android:layout_toRightOf="@id/FriendImage"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
-        android:textSize="25sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="#000"/>
 
@@ -34,13 +34,14 @@
     <TextView
         android:id="@+id/FriendDate"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="23dp"
         android:text=""
         android:layout_toRightOf="@id/FriendImage"
         android:layout_below="@id/FriendName"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="12dp"
         android:textSize="15sp"
+        android:paddingRight="10dp"
         android:textColor="#000"/>
 
 </RelativeLayout>

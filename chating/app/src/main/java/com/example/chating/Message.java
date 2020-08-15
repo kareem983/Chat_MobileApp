@@ -5,13 +5,15 @@ public class Message {
     private String senderMessage;
     private String receiverMessage;
     private String messageType;
-    private int SeenStateNum;
+    private boolean IsImage;
+    private Integer SeenStateNum;
 
-    public Message(String senderMessage,String receiverMessage, String messageType, int SeenStateNum){
+    public Message(String senderMessage,String receiverMessage, String messageType, Integer SeenStateNum, boolean IsImage){
         this.senderMessage=senderMessage;
         this.receiverMessage=receiverMessage;
         this.messageType=messageType;
         this.SeenStateNum=SeenStateNum;
+        this.IsImage=IsImage;
     }
 
 
@@ -27,9 +29,11 @@ public class Message {
         return messageType;
     }
 
-    public int getSeenStateNum() {
+    public Integer getSeenStateNum() {
         return SeenStateNum;
     }
 
-
+    public boolean isImage() {
+        return IsImage;
+    }
 }

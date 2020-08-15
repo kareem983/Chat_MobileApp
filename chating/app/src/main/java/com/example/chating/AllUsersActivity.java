@@ -80,7 +80,6 @@ public class AllUsersActivity extends AppCompatActivity {
         m.addListenerForSingleValueEvent(eventListener);
 
 
-
         //if the user click to any user contact
         usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -103,21 +102,24 @@ public class AllUsersActivity extends AppCompatActivity {
         final UsersAdapter adapter=new UsersAdapter(AllUsersActivity.this,UsersArrayList);
 
         for(int i=0;i<UsersId.size();i++){
-            mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("users").child(UsersId.get(i));
-            mDatabaseReference.addValueEventListener(new ValueEventListener() {
+            DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+            DatabaseReference m=root.child("users").child(UsersId.get(i));
+            ValueEventListener eventListener= new ValueEventListener() {
                 @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    String name = snapshot.child("Name").getValue().toString();
-                    String status = snapshot.child("Status").getValue().toString();
-                    String image = snapshot.child("Image").getValue().toString();
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        String name = dataSnapshot.child("Name").getValue().toString();
+                        String status = dataSnapshot.child("Status").getValue().toString();
+                        String image = dataSnapshot.child("Image").getValue().toString();
 
-                    UsersArrayList.add(new Users(name,status,image,snapshot.getKey()));
-                    adapter.notifyDataSetChanged();
+                        UsersArrayList.add(new Users(name,status,image,dataSnapshot.getKey()));
+                        adapter.notifyDataSetChanged();
+                    }
                 }
-
                 @Override
-                public void onCancelled(@NonNull DatabaseError error) {}
-            });
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
+            };
+            m.addListenerForSingleValueEvent(eventListener);
 
         }
         usersListView.setAdapter(adapter);

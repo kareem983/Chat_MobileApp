@@ -4,24 +4,46 @@
     android:layout_height="match_parent">
 
 
-    <TextView
-        android:id="@+id/receiver_inList"
-        android:layout_width="200dp"
+    <LinearLayout
+        android:id="@+id/RContainer"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:minWidth="100dp"
+        android:orientation="vertical"
+        android:layout_alignParentLeft="true"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
+        android:background="@drawable/receive_message">
+
+    <TextView
+        android:id="@+id/receiver_inList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:minWidth="100dp"
         android:padding="10dp"
         android:textSize="18sp"
         android:text=""
         android:textColor="#FFF"
-        android:background="@drawable/receive_message"
         android:gravity="left"/>
+
+        <ImageView
+            android:id="@+id/Receiver_Image"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
 
 
     <LinearLayout
         android:id="@+id/SContainer"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:maxWidth="300dp"
+        android:minWidth="100dp"
         android:orientation="vertical"
         android:layout_alignParentRight="true"
         android:layout_marginRight="10dp"
@@ -30,14 +52,24 @@
 
         <TextView
             android:id="@+id/sender_inList"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:maxWidth="300dp"
+            android:minWidth="100dp"
             android:layout_marginTop="10dp"
             android:padding="10dp"
             android:textSize="18sp"
             android:gravity="left"
             android:text=""
-            android:textColor="#FFF" />
+            android:textColor="#FFF"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/sender_Image"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center"/>
+
 
         <ImageView
             android:id="@+id/seenIcon"

@@ -110,7 +110,7 @@ public class FriendsFragment extends Fragment {
 
 
 
-        //check if the current user have requests or not
+        //check if the current user have friends or not
         DatabaseReference root= FirebaseDatabase.getInstance().getReference();
         DatabaseReference m=root.child("friends").child(CurrentUId);
         ValueEventListener eventListener= new ValueEventListener() {
@@ -143,19 +143,21 @@ public class FriendsFragment extends Fragment {
     private void checkTheFriends(){
         FriendsId.clear();
         FriendsDates.clear();
+
         mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId);
         mDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for( DataSnapshot Snapshot: snapshot.getChildren()){
-                        FriendsId.add(Snapshot.getKey().toString());
-                        FriendsDates.add(Snapshot.getValue().toString());
+                    FriendsId.add(Snapshot.getKey().toString());
+                    FriendsDates.add(Snapshot.getValue().toString());
                 }
                 sentUserDataToArrayAdapter();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });
+
     }
 
 
@@ -165,22 +167,26 @@ public class FriendsFragment extends Fragment {
 
         for(int i=0;i<FriendsId.size();i++){
             final String FriendshipDate = FriendsDates.get(i);
-            mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("users").child(FriendsId.get(i));
-            mDatabaseReference.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    String name = snapshot.child("Name").getValue().toString();
-                    String image = snapshot.child("Image").getValue().toString();
-                    String OnLine = snapshot.child("Online").getValue().toString();
-                    if(OnLine.equals("true"))FriendsArrayList.add(new Friends(name,FriendshipDate,image,snapshot.getKey(),true));
-                    else FriendsArrayList.add(new Friends(name,FriendshipDate,image,snapshot.getKey(),false));
 
-                    adapter.notifyDataSetChanged();
+            DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+            DatabaseReference m=root.child("users").child(FriendsId.get(i));
+            ValueEventListener eventListener= new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                        String name = dataSnapshot.child("Name").getValue().toString();
+                        String image = dataSnapshot.child("Image").getValue().toString();
+                        String OnLine = dataSnapshot.child("Online").getValue().toString();
+                        if(OnLine.equals("true"))FriendsArrayList.add(new Friends(name,FriendshipDate,image,dataSnapshot.getKey(),true));
+                        else FriendsArrayList.add(new Friends(name,FriendshipDate,image,dataSnapshot.getKey(),false));
+
+                        adapter.notifyDataSetChanged();
+                    }
                 }
-
                 @Override
-                public void onCancelled(@NonNull DatabaseError error) {}
-            });
+                public void onCancelled(@NonNull DatabaseError databaseError) {}
+            };
+            m.addListenerForSingleValueEvent(eventListener);
 
         }
         UserFriendsListView.setAdapter(adapter);

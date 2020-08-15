@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -47,7 +48,11 @@ public class UserProfileActivity extends AppCompatActivity {
     private String UserName;
     private String UserStatus;
     private String UserImage;
-    private int numOfUsers;
+    private int numOfFriends;
+    private int numbOfMutualFriends;
+    private ArrayList<String> CurrentUserFriends;
+    private ArrayList<String> UserFriends;
+
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
@@ -76,7 +81,9 @@ public class UserProfileActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        numOfUsers=0;
+        numOfFriends=numbOfMutualFriends=0;
+        CurrentUserFriends=new ArrayList<>();
+        UserFriends=new ArrayList<>();
 
         //define xml views
         UserImageView=(ImageView)findViewById(R.id.UserProfileImage);
@@ -100,6 +107,11 @@ public class UserProfileActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference().child("friends").child("1").setValue("1");
         FirebaseDatabase.getInstance().getReference().child("chats").child("1").setValue("1");
 
+
+
+
+        //count mutual friends and it's friends
+        ReceiveCurrentUserFriends();
 
 
         //buttons state
@@ -170,7 +182,7 @@ public class UserProfileActivity extends AppCompatActivity {
                             public void onSuccess(Void aVoid) {
                                 mProgressDialog.dismiss();
                                 Toast.makeText(UserProfileActivity.this,"You became Friends",Toast.LENGTH_SHORT).show();
-                                UpdateNumOfFriends();
+                                ReceiveCurrentUserFriends();
                             }
                         });
                     }
@@ -183,7 +195,6 @@ public class UserProfileActivity extends AppCompatActivity {
                 //add chats child
                 FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUId).child(UserId).setValue("");
                 FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUId).setValue("");
-
 
 
 
@@ -260,7 +271,7 @@ public class UserProfileActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 mProgressDialog.dismiss();
                                                 Toast.makeText(UserProfileActivity.this,"You UnFriend this person",Toast.LENGTH_SHORT).show();
-                                                UpdateNumOfFriends();
+                                                ReceiveCurrentUserFriends();
                                             }
                                         });
                                     }
@@ -309,9 +320,6 @@ public class UserProfileActivity extends AppCompatActivity {
         };
         m.addListenerForSingleValueEvent(eventListener);
         //******************************************************************************************
-
-
-        UpdateNumOfFriends();
 
     }
 
@@ -362,6 +370,61 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
 
+    private void ReceiveCurrentUserFriends(){
+        numOfFriends=0;
+        numbOfMutualFriends=0;
+        CurrentUserFriends.clear();
+        //number of mutual friends
+        DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("friends").child(CurrentUId);
+        ValueEventListener eventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot Snapshot: dataSnapshot.getChildren()){CurrentUserFriends.add(Snapshot.getKey().toString());}
+                }
+                ReceiveUserFriends();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
+
+
+    }
+
+
+    private void ReceiveUserFriends(){
+        UserFriends.clear();
+
+        DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("friends").child(UserId);
+        ValueEventListener eventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot Snapshot: dataSnapshot.getChildren()){UserFriends.add(Snapshot.getKey().toString());}
+                }
+                CountMutualFriends();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
+
+    }
+
+
+    private void CountMutualFriends(){
+
+        for(int i=0;i<CurrentUserFriends.size();i++){
+            for(int j=0;j<UserFriends.size();j++){
+                 if(CurrentUserFriends.get(i).equals(UserFriends.get(j)))numbOfMutualFriends++;
+            }
+        }
+
+        UpdateNumOfFriends();
+    }
     private void UpdateNumOfFriends(){
         //number of friends
         DatabaseReference Root=FirebaseDatabase.getInstance().getReference();
@@ -370,13 +433,13 @@ public class UserProfileActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
-                    for(DataSnapshot Snapshot: dataSnapshot.getChildren()){numOfUsers++;}
+                    for(DataSnapshot Snapshot: dataSnapshot.getChildren()){numOfFriends++;}
 
-                    if(numOfUsers==1)UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friend");
-                    else UserTotalFriendsView.setText(" "+String.valueOf(numOfUsers)+" friends");
+                    if(numOfFriends==1)UserTotalFriendsView.setText(" "+String.valueOf(numOfFriends)+" friend || "+String.valueOf(numbOfMutualFriends)+" Mutual friends");
+                    else UserTotalFriendsView.setText(" "+String.valueOf(numOfFriends)+" friends || "+String.valueOf(numbOfMutualFriends)+" Mutual friends");
                 }
                 else{
-                    UserTotalFriendsView.setText(" 0 friends");
+                    UserTotalFriendsView.setText(" 0 friends || "+String.valueOf(numbOfMutualFriends)+ " Mutual friends");
                 }
             }
             @Override
