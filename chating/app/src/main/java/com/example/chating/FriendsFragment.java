@@ -77,86 +77,94 @@ public class FriendsFragment extends Fragment {
         //define list view
         UserFriendsListView=(ListView)mMainView.findViewById(R.id.UserFriends_ListView_id);
 
+        SomeProcess();
 
         return mMainView;
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //firebase
-        mAuth=FirebaseAuth.getInstance();
-        currentUser=mAuth.getCurrentUser();
-        CurrentUId=currentUser.getUid();
+   private void SomeProcess(){
 
-        //define array lists
-        FriendsId=new ArrayList<>();
-        FriendsArrayList=new ArrayList<>();
-        FriendsDates=new ArrayList<>();
+       //firebase
+       mAuth=FirebaseAuth.getInstance();
+       currentUser=mAuth.getCurrentUser();
+       CurrentUId=currentUser.getUid();
 
-        //if the user click to any friend contact
-        UserFriendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Friends friend= FriendsArrayList.get(i);
-                Intent intent = new Intent(getActivity(),FriendsChattingActivity.class);
-                intent.putExtra("User Id",friend.getFriendId());
-                intent.putExtra("User Name",friend.getFriendName());
-                intent.putExtra("User Image",friend.getFriendImage());
-                startActivity(intent);
-            }
-        });
+       //define array lists
+       FriendsId=new ArrayList<>();
+       FriendsArrayList=new ArrayList<>();
+       FriendsDates=new ArrayList<>();
 
+       //if the user click to any friend contact
+       UserFriendsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+           @Override
+           public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+               Friends friend= FriendsArrayList.get(i);
+               Intent intent = new Intent(getActivity(),FriendsChattingActivity.class);
+               intent.putExtra("User Id",friend.getFriendId());
+               intent.putExtra("User Name",friend.getFriendName());
+               intent.putExtra("User Image",friend.getFriendImage());
+               startActivity(intent);
+           }
+       });
 
 
-        //check if the current user have friends or not
-        DatabaseReference root= FirebaseDatabase.getInstance().getReference();
-        DatabaseReference m=root.child("friends").child(CurrentUId);
-        ValueEventListener eventListener= new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists()){
-                    FriendsId.clear();
-                    FriendsDates.clear();
-                    FriendsArrayList.clear();
-                    final FriendsAdapter adapter=new FriendsAdapter(getActivity(),FriendsArrayList);
-                    UserFriendsListView.setAdapter(adapter);
-                    checkTheFriends();
-                }
-                else{
-                    //to not display any friend because the user doesn't have any friend
-                    FriendsId.clear();
-                    FriendsDates.clear();
-                    FriendsArrayList.clear();
-                    final FriendsAdapter adapter=new FriendsAdapter(getActivity(),FriendsArrayList);
-                    UserFriendsListView.setAdapter(adapter);
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {}
-        };
-        m.addListenerForSingleValueEvent(eventListener);
-    }
+
+       //check if the current user have friends or not
+       DatabaseReference root= FirebaseDatabase.getInstance().getReference();
+       DatabaseReference m=root.child("friends").child(CurrentUId);
+       ValueEventListener eventListener= new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               if(dataSnapshot.exists()){
+                   FriendsId.clear();
+                   FriendsDates.clear();
+                   FriendsArrayList.clear();
+                   final FriendsAdapter adapter=new FriendsAdapter(getActivity(),FriendsArrayList);
+                   UserFriendsListView.setAdapter(adapter);
+                   checkTheFriends();
+               }
+               else{
+                   //to not display any friend because the user doesn't have any friend
+                   FriendsId.clear();
+                   FriendsDates.clear();
+                   FriendsArrayList.clear();
+                   final FriendsAdapter adapter=new FriendsAdapter(getActivity(),FriendsArrayList);
+                   UserFriendsListView.setAdapter(adapter);
+               }
+           }
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {}
+       };
+       m.addListenerForSingleValueEvent(eventListener);
+
+
+
+   }
 
 
     private void checkTheFriends(){
         FriendsId.clear();
         FriendsDates.clear();
 
-        mDatabaseReference= FirebaseDatabase.getInstance().getReference().child("friends").child(CurrentUId);
-        mDatabaseReference.addValueEventListener(new ValueEventListener() {
+        DatabaseReference root=FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("friends").child(CurrentUId);
+        ValueEventListener eventListener= new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for( DataSnapshot Snapshot: snapshot.getChildren()){
-                    FriendsId.add(Snapshot.getKey().toString());
-                    FriendsDates.add(Snapshot.getValue().toString());
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for( DataSnapshot Snapshot: dataSnapshot.getChildren()){
+                        FriendsId.add(Snapshot.getKey().toString());
+                        FriendsDates.add(Snapshot.getValue().toString());
+                    }
+                    sentUserDataToArrayAdapter();
                 }
-                sentUserDataToArrayAdapter();
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
+
 
     }
 

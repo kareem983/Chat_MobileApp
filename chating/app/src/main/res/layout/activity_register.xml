@@ -148,7 +148,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/LBtn"
-        android:text="already have account?"
+        android:text="Already have account?"
         android:layout_marginBottom="12dp"
         android:layout_centerHorizontal="true"
         android:textSize="16sp"

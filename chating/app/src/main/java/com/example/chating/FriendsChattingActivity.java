@@ -106,11 +106,15 @@ public class FriendsChattingActivity extends AppCompatActivity {
         MessageEdit = (EditText)findViewById(R.id.messageEdit);
 
         chatting_arraylist =new ArrayList<>();
-        final MessageAdapter adapter=new MessageAdapter(this,chatting_arraylist);
+      /*final MessageAdapter adapter=new MessageAdapter(this,chatting_arraylist);
         chatting_listView.setAdapter(adapter);
-
+      */
         //if the user wanted to delete message
         DeleteMessage();
+
+        //check if the user online or not
+        checkUserState();
+
 
 
         AddImageBtn.setOnClickListener(new View.OnClickListener() {
@@ -154,12 +158,12 @@ public class FriendsChattingActivity extends AppCompatActivity {
         });
 
 
+
     }
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void checkUserState(){
+
         FirebaseDatabase.getInstance().getReference().child("users").child(UserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

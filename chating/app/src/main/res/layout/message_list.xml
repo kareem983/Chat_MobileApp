@@ -34,8 +34,8 @@
             android:layout_height="300dp"
             android:layout_gravity="center"/>
 
-    </LinearLayout>
 
+    </LinearLayout>
 
 
     <LinearLayout

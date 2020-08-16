@@ -11,8 +11,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FriendsChattingActivity"
-            android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".DeleteAccountActivity"></activity>
+        <activity android:name=".ResetPasswordActivity" />
+        <activity
+            android:name=".FriendsChattingActivity"
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".RequestProfileActivity"
             android:parentActivityName=".MainActivity" />

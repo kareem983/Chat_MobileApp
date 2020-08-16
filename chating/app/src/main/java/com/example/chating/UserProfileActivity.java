@@ -109,6 +109,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
 
+        checkUserHasRequest();
 
         //count mutual friends and it's friends
         ReceiveCurrentUserFriends();
@@ -292,9 +293,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
 
-    @Override
-    protected void onStart() {
-        super.onStart();
+    private void checkUserHasRequest(){
 
         //******************************************************************************************
         //check if the user have the request before or not
@@ -322,8 +321,6 @@ public class UserProfileActivity extends AppCompatActivity {
         //******************************************************************************************
 
     }
-
-
 
 
     private void checkTheUserState(){

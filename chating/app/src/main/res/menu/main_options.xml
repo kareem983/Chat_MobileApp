@@ -11,6 +11,9 @@
         android:id="@+id/AllUsers_id"
         android:title="All Users"/>
 
+    <item
+        android:id="@+id/DeleteAccount_id"
+        android:title="Delete Account"/>
 
     <item
         android:id="@+id/Logout_id"

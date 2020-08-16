@@ -5,6 +5,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private SectionPagerAdapter mPagerAdapter;
+    public static Activity fa;
 
 
     public static boolean isFinished;
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        fa=this;
         mAuth= FirebaseAuth.getInstance();
 
         mToolBar= (Toolbar)findViewById(R.id.MainToolBar);
@@ -112,6 +115,11 @@ public class MainActivity extends AppCompatActivity {
 
         else if(id == R.id.AllUsers_id){
             Intent intent = new Intent(MainActivity.this,AllUsersActivity.class);
+            startActivity(intent);
+        }
+
+        else if(id == R.id.DeleteAccount_id){
+            Intent intent = new Intent(MainActivity.this,DeleteAccountActivity.class);
             startActivity(intent);
         }
 

@@ -74,13 +74,13 @@ public class ChatsFragment extends Fragment {
         //define list view
         UserChatsListView=(ListView)mMainView.findViewById(R.id.UserChats_ListView_id);
 
+        someProcess();
+
         return  mMainView;
     }
 
 
-    @Override
-    public void onStart() {
-        super.onStart();
+    private void someProcess(){
 
         //firebase
         mAuth=FirebaseAuth.getInstance();
@@ -131,6 +131,8 @@ public class ChatsFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
         m.addListenerForSingleValueEvent(eventListener);
+
+
 
     }
 
