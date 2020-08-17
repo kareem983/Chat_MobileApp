@@ -73,6 +73,7 @@ public class FriendsChattingActivity extends AppCompatActivity {
     private static final int GALARY_PICK=1;
     private StorageReference mStorageRef;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,9 +107,9 @@ public class FriendsChattingActivity extends AppCompatActivity {
         MessageEdit = (EditText)findViewById(R.id.messageEdit);
 
         chatting_arraylist =new ArrayList<>();
-      /*final MessageAdapter adapter=new MessageAdapter(this,chatting_arraylist);
+        final MessageAdapter adapter=new MessageAdapter(this,chatting_arraylist);
         chatting_listView.setAdapter(adapter);
-      */
+
         //if the user wanted to delete message
         DeleteMessage();
 
@@ -153,6 +154,8 @@ public class FriendsChattingActivity extends AppCompatActivity {
                     FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).push().setValue(ReceiveHashMap);
 
                     MessageEdit.setText("");
+
+
                 }
             }
         });
@@ -162,22 +165,38 @@ public class FriendsChattingActivity extends AppCompatActivity {
     }
 
 
-    private void checkUserState(){
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-        FirebaseDatabase.getInstance().getReference().child("users").child(UserId).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String stat = snapshot.child("Seen").getValue().toString();
-                if(stat.equals("offline")) UserSeenNum=1;
-                else if(stat.equals("online")) UserSeenNum=2;
-                else if(stat.equals("seen")) UserSeenNum=3;
-                SaveInAdapter();
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+
 
     }
+
+    private void checkUserState(){
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m = root.child("users").child(UserId);
+        ValueEventListener eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String stat = dataSnapshot.child("Seen").getValue().toString();
+                    if(stat.equals("offline")) UserSeenNum=1;
+                    else if(stat.equals("online")) UserSeenNum=2;
+                    else if(stat.equals("seen")) UserSeenNum=3;
+                    SaveInAdapter();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        m.addListenerForSingleValueEvent(eventListener);
+
+    }
+
+
 
     private void SaveInAdapter(){
         final MessageAdapter adapter=new MessageAdapter(this,chatting_arraylist);
@@ -224,7 +243,8 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
 
     private void update_MessagesSeenStateInDatabase(){
-        //this method's work to update the seen state to all messages that the user sent
+        //mark all my sent messages (seen or online) applying to Friend state
+
         if(UserSeenNum==3){  // so the friend seen now
             DatabaseReference root= FirebaseDatabase.getInstance().getReference();
             DatabaseReference m=root.child("chats").child(CurrentUID).child(UserId);
@@ -265,6 +285,30 @@ public class FriendsChattingActivity extends AppCompatActivity {
             };
             m.addListenerForSingleValueEvent(eventListener);
         }
+
+
+        //mark all the sent friend's messages seen because me seen now
+        DatabaseReference root= FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("chats").child(UserId).child(CurrentUID);
+        ValueEventListener eventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot Snapshot : dataSnapshot.getChildren()){
+                        if(Snapshot.child("Message").getValue().toString().substring(0,1).equals("S")) {
+                            //Toast.makeText(FriendsChattingActivity.this,Snapshot.getKey().toString(),Toast.LENGTH_SHORT).show();
+                            FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).child(Snapshot.getKey().toString()).child("Message State").setValue("3");
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
+
+
+
     }
 
 
@@ -292,25 +336,33 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
     private void displayUserDataInActionBar(){
 
-        FirebaseDatabase.getInstance().getReference().child("users").child(UserId).addValueEventListener(new ValueEventListener() {
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m = root.child("users").child(UserId);
+        ValueEventListener eventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                UserOnLine = snapshot.child("Online").getValue().toString();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    UserOnLine = dataSnapshot.child("Online").getValue().toString();
 
-                //display UserData
-                custom_UserName.setText(UserName);
-                // online state
-                if(UserOnLine.equals("true")) custom_UserOnline.setText("Online now");
-                else {
-                    Long time = Long.valueOf(UserOnLine);
-                    custom_UserOnline.setText(GetTimeAgo.getTimeAgo(time,FriendsChattingActivity.this).toString());
+                    //display UserData
+                    custom_UserName.setText(UserName);
+                    // online state
+                    if(UserOnLine.equals("true")) custom_UserOnline.setText("Online now");
+                    else {
+                        Long time = Long.valueOf(UserOnLine);
+                        custom_UserOnline.setText(GetTimeAgo.getTimeAgo(time,FriendsChattingActivity.this).toString());
+                    }
+
+                    Picasso.get().load(UserImage).placeholder(R.drawable.user).into(custom_UserImage);
+
                 }
-
-                Picasso.get().load(UserImage).placeholder(R.drawable.user).into(custom_UserImage);
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        m.addListenerForSingleValueEvent(eventListener);
 
     }
 
@@ -336,8 +388,14 @@ public class FriendsChattingActivity extends AppCompatActivity {
                 }).setNegativeButton("Everyone", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        //call delete For everyone method
-                        DeleteForEveryOne(message);
+                        if(UserSeenNum==3){
+                            Toast.makeText(FriendsChattingActivity.this,"you can't delete this message\nyour friend seen this message",Toast.LENGTH_LONG).show();
+                            dialog.cancel();
+                        }
+                        else {
+                            //call delete For everyone method
+                            DeleteForEveryOne(message);
+                        }
                     }
                 });
                 AlertDialog alert = checkAlert.create();
@@ -349,64 +407,96 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
     }
 
+
     private void DeleteForMe(final Message message){
-        FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).addValueEventListener(new ValueEventListener() {
+
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m = root.child("chats").child(CurrentUID).child(UserId);
+        ValueEventListener eventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for( DataSnapshot Snapshot: snapshot.getChildren()){
-                    if(Snapshot.child("Message").getValue().equals("R"+message.getReceiverMessage()) || Snapshot.child("Message").getValue().equals("S"+message.getSenderMessage())){
-                        //delete message
-                        FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).child(Snapshot.getKey()).removeValue();
-                        Toast.makeText(FriendsChattingActivity.this,"The message deleted just for you Successfully",Toast.LENGTH_SHORT).show();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for( DataSnapshot Snapshot: dataSnapshot.getChildren()){
+                        if(Snapshot.child("Message").getValue().equals("R"+message.getReceiverMessage()) || Snapshot.child("Message").getValue().equals("S"+message.getSenderMessage())){
+                            //delete message
+                            FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).child(Snapshot.getKey()).removeValue();
+                            Toast.makeText(FriendsChattingActivity.this,"The message deleted just for you Successfully",Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        m.addListenerForSingleValueEvent(eventListener);
 
     }
 
 
     private void DeleteForEveryOne(final Message message){
 
-        FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).addValueEventListener(new ValueEventListener() {
+        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m = root.child("chats").child(CurrentUID).child(UserId);
+        ValueEventListener eventListener = new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for( DataSnapshot Snapshot: snapshot.getChildren()){
-                    if(Snapshot.child("Message").getValue().equals("R"+message.getReceiverMessage()) || Snapshot.child("Message").getValue().equals("S"+message.getSenderMessage())){
-                        //delete message
-                        FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).child(Snapshot.getKey()).removeValue();
-                        Toast.makeText(FriendsChattingActivity.this,"The message deleted for Every one Successfully",Toast.LENGTH_SHORT).show();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for( DataSnapshot Snapshot: dataSnapshot.getChildren()){
+                        if(Snapshot.child("Message").getValue().equals("R"+message.getReceiverMessage()) ||
+                                Snapshot.child("Message").getValue().equals("S"+message.getSenderMessage())
+                                ||Snapshot.child("Message").getValue().equals("S"+message.getReceiverMessage()) ||
+                                Snapshot.child("Message").getValue().equals("R"+message.getSenderMessage())){
+                            //delete message
+                            FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).child(Snapshot.getKey()).removeValue();
+                            Toast.makeText(FriendsChattingActivity.this,"The message deleted for Every one Successfully",Toast.LENGTH_SHORT).show();
+                            HelpDelete(message);
+                        }
                     }
-                }
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
 
-        FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for( DataSnapshot Snapshot: snapshot.getChildren()){
-                    if(Snapshot.child("Message").getValue().equals("R"+message.getReceiverMessage()) ||
-                            Snapshot.child("Message").getValue().equals("S"+message.getSenderMessage())
-                            ||Snapshot.child("Message").getValue().equals("S"+message.getReceiverMessage()) ||
-                            Snapshot.child("Message").getValue().equals("R"+message.getSenderMessage())){
-                        //delete message
-                        FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).child(Snapshot.getKey()).removeValue();
-                    }
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        m.addListenerForSingleValueEvent(eventListener);
+
+
 
     }
 
 
+    private void HelpDelete(final Message message){
+        DatabaseReference Root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference x = Root.child("chats").child(UserId).child(CurrentUID);
+        ValueEventListener EventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for( DataSnapshot Snapshot: dataSnapshot.getChildren()){
+                        if(Snapshot.child("Message").getValue().equals("R"+message.getReceiverMessage()) ||
+                                Snapshot.child("Message").getValue().equals("S"+message.getSenderMessage())
+                                ||Snapshot.child("Message").getValue().equals("S"+message.getReceiverMessage()) ||
+                                Snapshot.child("Message").getValue().equals("R"+message.getSenderMessage())){
+                            //delete message
+                            FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).child(Snapshot.getKey()).removeValue();
+                        }
+                    }
+                }
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        };
+        x.addListenerForSingleValueEvent(EventListener);
+
+
+
+    }
 
 
     //crop and send image

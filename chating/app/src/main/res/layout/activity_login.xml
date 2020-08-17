@@ -28,7 +28,7 @@
         android:layout_below="@id/Loginicon"
         android:text="User Login"
         android:layout_centerHorizontal="true"
-        android:textSize="25sp"
+        android:textSize="25dp"
         android:textColor="@color/colorPrimary"
         android:textStyle="italic"/>
 
@@ -48,7 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            android:textSize="20sp"
+            android:textSize="20dp"
             android:textColor="#000"
             android:inputType="textEmailAddress"
             android:paddingBottom="5dp"
@@ -73,7 +73,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:textSize="20sp"
+            android:textSize="20dp"
             android:textColor="#000"
             android:inputType="textPassword"
             android:paddingBottom="5dp"
@@ -91,7 +91,7 @@
         android:text="Forget your password?"
         android:textColor="#000"
         android:layout_marginTop="20dp"
-        android:textSize="17sp"
+        android:textSize="17dp"
         android:layout_marginLeft="45dp"
         android:textStyle="italic"/>
 
@@ -107,7 +107,7 @@
         android:background="@drawable/button1"
         android:textColor="#FFF"
         android:padding="15dp"
-        android:textSize="18sp" />
+        android:textSize="18dp" />
 
     <TextView
         android:id="@+id/Rt"
@@ -117,7 +117,7 @@
         android:text="Not a User?"
         android:layout_marginBottom="12dp"
         android:layout_centerHorizontal="true"
-        android:textSize="16sp"
+        android:textSize="16dp"
         android:textColor="#000"
         android:textStyle="italic"/>
 
@@ -132,6 +132,6 @@
         android:background="@drawable/button2"
         android:textColor="#000"
         android:padding="15dp"
-        android:textSize="15sp" />
+        android:textSize="15dp" />
 
 </RelativeLayout>

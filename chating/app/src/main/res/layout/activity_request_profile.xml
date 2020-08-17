@@ -39,7 +39,7 @@
         android:layout_marginLeft="10dp"
         android:text=""
         android:textColor="#FFF"
-        android:textSize="18sp"/>
+        android:textSize="18dp"/>
 
     <TextView
         android:id="@+id/RequestProfileName"
@@ -51,7 +51,7 @@
         android:gravity="center"
         android:textColor="#FFF"
         android:textStyle="bold"
-        android:textSize="25sp"/>
+        android:textSize="25dp"/>
 
 
     <TextView
@@ -76,7 +76,7 @@
         android:text="Confirm friend request"
         android:textColor="@color/colorPrimary"
         android:textAllCaps="true"
-        android:textSize="18sp"
+        android:textSize="18dp"
         android:padding="10dp"
         android:layout_marginBottom="105dp"/>
 
@@ -91,7 +91,7 @@
         android:text="Reject friend request"
         android:textColor="#FFF"
         android:textAllCaps="true"
-        android:textSize="18sp"
+        android:textSize="18dp"
         android:padding="10dp"
         android:layout_marginBottom="40dp"/>
 

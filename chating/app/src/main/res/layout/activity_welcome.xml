@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome to messageya\n             chat App"
-        android:textSize="25sp"
+        android:textSize="25dp"
         android:textColor="#FFF"
         android:textStyle="italic"
         android:layout_centerHorizontal="true"
@@ -36,7 +36,7 @@
         android:background="#ED2C2C"
         android:text="Create A new Account?"
         android:textAllCaps="true"
-        android:textSize="18sp"
+        android:textSize="18dp"
         android:textColor="#FFF"
         android:padding="10dp"
         android:layout_marginTop="15dp"/>
@@ -51,11 +51,9 @@
         android:background="#FFF"
         android:text="already have account"
         android:textAllCaps="true"
-        android:textSize="18sp"
+        android:textSize="18dp"
         android:textColor="@color/colorPrimary"
         android:padding="10dp"
         android:layout_marginTop="15dp"/>
-
-
 
 </RelativeLayout>

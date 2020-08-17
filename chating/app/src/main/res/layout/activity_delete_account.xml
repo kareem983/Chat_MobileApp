@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Delete Account"
-            android:textSize="25sp"
+            android:textSize="25dp"
             android:layout_marginTop="20dp"
             android:textStyle="bold"/>
 
@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:textSize="20sp"
+                android:textSize="20dp"
                 android:textColor="#000"
                 android:inputType="textEmailAddress"
                 android:paddingBottom="5dp"
@@ -59,7 +59,7 @@
             android:background="@drawable/button3"
             android:text="Delete"
             android:textAllCaps="true"
-            android:textSize="18sp"
+            android:textSize="18dp"
             android:textColor="#FFF"
             android:padding="10dp"
             android:layout_marginTop="45dp"/>

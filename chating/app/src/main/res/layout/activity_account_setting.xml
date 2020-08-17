@@ -24,7 +24,7 @@
        android:layout_height="38dp"
        android:text=""
        android:layout_below="@id/UserImage"
-       android:textSize="25sp"
+       android:textSize="25dp"
        android:layout_marginTop="5dp"
        android:gravity="center"
        android:textColor="#FFF"
@@ -38,7 +38,7 @@
        android:layout_height="wrap_content"
        android:text=""
        android:layout_below="@id/UserName"
-       android:textSize="18sp"
+       android:textSize="18dp"
        android:layout_marginTop="0dp"
        android:gravity="center"
        android:textColor="#FFF"
@@ -57,7 +57,7 @@
        android:text="Change Status"
        android:textColor="@color/colorPrimary"
        android:textAllCaps="true"
-       android:textSize="18sp"
+       android:textSize="18dp"
        android:padding="10dp"
        android:layout_marginBottom="18dp"/>
 
@@ -72,7 +72,7 @@
        android:text="Change Image"
        android:textColor="#FFF"
        android:textAllCaps="true"
-       android:textSize="18sp"
+       android:textSize="18dp"
        android:padding="10dp"
        android:layout_marginBottom="55dp"/>
 

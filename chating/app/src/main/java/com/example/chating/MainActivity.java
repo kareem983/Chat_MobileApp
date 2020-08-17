@@ -1,26 +1,28 @@
 package com.example.chating;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.viewpager.widget.ViewPager;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private long backPressed;
@@ -32,8 +34,13 @@ public class MainActivity extends AppCompatActivity {
     private SectionPagerAdapter mPagerAdapter;
     public static Activity fa;
 
+    private ArrayList<String> Users;
+
 
     public static boolean isFinished;
+    private String UserId;
+    private String CurrentUserId;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +54,14 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Messageya");
 
 
-        mViewPager=(ViewPager)findViewById(R.id.MainViewPager);
         mTabLayout=(TabLayout)findViewById(R.id.MainTabLayout);
+        mViewPager=(ViewPager)findViewById(R.id.MainViewPager);
 
         mPagerAdapter= new SectionPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(mPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
+        Users=new ArrayList<>();
 
     }
 
@@ -73,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
         else{
+            if(isFinished) {
+                AllUsersChats();
+            }
             String CurrentUID = currentUser.getUid();
             FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Online").setValue("true");
             FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Seen").setValue("online");
@@ -81,20 +92,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
-
     @Override
     protected void onStop() {
         super.onStop();
 
         if(isFinished) {
-            FirebaseUser currentUser = mAuth.getCurrentUser();
+            FirebaseAuth Auth= FirebaseAuth.getInstance();
+            FirebaseUser currentUser = Auth.getCurrentUser();
             if (currentUser != null) {
                 String CurrentUID = currentUser.getUid();
                 FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Online").setValue(ServerValue.TIMESTAMP);
                 FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Seen").setValue("offline");
             }
         }
+
     }
 
 
@@ -175,5 +186,65 @@ public class MainActivity extends AppCompatActivity {
         }
         backPressed=System.currentTimeMillis();
     }
+
+
+
+
+
+
+    private void AllUsersChats(){
+        Users.clear();
+        DatabaseReference root= FirebaseDatabase.getInstance().getReference();
+        DatabaseReference m=root.child("chats");
+        ValueEventListener eventListener= new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+                    for(DataSnapshot Snapshot : dataSnapshot.getChildren()){
+                        Users.add(Snapshot.getKey());
+                    }
+                    markMessagesOnlineState();
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {}
+        };
+        m.addListenerForSingleValueEvent(eventListener);
+
+
+    }
+
+
+    private void markMessagesOnlineState(){
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        CurrentUserId= currentUser.getUid();
+
+
+        //mark all the sent friends' messages online because me online now
+        for(int i=0 ; i<Users.size();i++) {
+            UserId = Users.get(i);
+            DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference m = root.child("chats").child(UserId).child(CurrentUserId);
+            ValueEventListener eventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot Snapshot : dataSnapshot.getChildren()) {
+                            if (Snapshot.child("Message").getValue().toString().substring(0, 1).equals("S") && !Snapshot.child("Message State").getValue().toString().equals("3")) {
+                                FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUserId).child(Snapshot.getKey().toString()).child("Message State").setValue("2");
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                }
+            };
+            m.addListenerForSingleValueEvent(eventListener);
+
+        }
+    }
+
 
 }
