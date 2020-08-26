@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.chatting">
+    <!-- permission of cropper image -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/appicon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.example.chatting.DeleteAccountActivity"></activity>
+        <activity android:name="com.example.chatting.ResetPasswordActivity" />
+        <activity
+            android:name="com.example.chatting.FriendsChattingActivity"
+            android:parentActivityName="com.example.chatting.MainActivity" />
+        <activity
+            android:name="com.example.chatting.RequestProfileActivity"
+            android:parentActivityName="com.example.chatting.MainActivity" />
+        <activity
+            android:name="com.example.chatting.UserProfileActivity"
+            android:parentActivityName="com.example.chatting.AllUsersActivity" />
+        <activity
+            android:name="com.example.chatting.AllUsersActivity"
+            android:parentActivityName="com.example.chatting.MainActivity" />
+        <activity
+            android:name="com.example.chatting.DisplayUserImageActivity"
+            android:parentActivityName="com.example.chatting.AccountSettingActivity" />
+        <activity
+            android:name="com.example.chatting.AccountStatusActivity"
+            android:parentActivityName="com.example.chatting.AccountSettingActivity" />
+        <activity
+            android:name="com.example.chatting.AccountSettingActivity"
+            android:parentActivityName="com.example.chatting.MainActivity" />
+        <activity android:name="com.example.chatting.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.chatting.LoginActivity"
+            android:parentActivityName="com.example.chatting.WelcomeActivity" />
+        <activity
+            android:name="com.example.chatting.RegisterActivity"
+            android:parentActivityName="com.example.chatting.WelcomeActivity" />
+        <activity android:name="com.example.chatting.WelcomeActivity" /> <!-- activity of cropper image -->
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+    </application>
+
+</manifest>
