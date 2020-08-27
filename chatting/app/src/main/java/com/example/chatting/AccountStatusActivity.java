@@ -105,6 +105,9 @@ public class AccountStatusActivity extends AppCompatActivity {
                                 mProgressBar.dismiss();
                                 finish();
                             }
+                            else{
+                                mProgressBar.hide();
+                            }
                         }
                     });
 

@@ -27,6 +27,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
@@ -41,10 +43,10 @@ public class AccountSettingActivity extends AppCompatActivity {
     private Button StatusBtn;
     private Button ImageBtn;
     private Toolbar mToolBar;
-    private ProgressDialog mDProgressialog;
+    private ProgressDialog mDProgressDialog;
 
     private static final int GALARY_PICK=1;
-    private String CureentUserId;
+    private String CurrentUserId;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mUserDatabase;
@@ -73,20 +75,35 @@ public class AccountSettingActivity extends AppCompatActivity {
 
         //firebase
         FirebaseUser currentUser= mAuth.getCurrentUser();
-        CureentUserId = currentUser.getUid();
-        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(CureentUserId);
+        CurrentUserId = currentUser.getUid();
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUserId);
+
+        //offline capability
+        mUserDatabase.keepSynced(true);
 
         //display name and status and image of the user
         mUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String Name = snapshot.child("Name").getValue().toString();
-                String Image = snapshot.child("Image").getValue().toString();
+                final String Image = snapshot.child("Image").getValue().toString();
                 String Status = snapshot.child("Status").getValue().toString();
 
                 UserName.setText(Name);
                 UserStatus.setText(Status);
-                if(!Image.equals("default")) Picasso.get().load(Image).placeholder(R.drawable.user).into(UserImage);
+                if(!Image.equals("default")) {
+                    //in case of offline image load quickly
+                    Picasso.get().load(Image).networkPolicy(NetworkPolicy.OFFLINE)
+                            .placeholder(R.drawable.user).into(UserImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                        }
+                        @Override
+                        public void onError(Exception e) {
+                            Picasso.get().load(Image).placeholder(R.drawable.user).into(UserImage);
+                        }
+                    });
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
@@ -143,11 +160,11 @@ public class AccountSettingActivity extends AppCompatActivity {
 
             if (resultCode == RESULT_OK) {
                 //Display Dialog progress
-                mDProgressialog=new ProgressDialog(AccountSettingActivity.this);
-                mDProgressialog.setTitle("Uploading Image");
-                mDProgressialog.setMessage("please wait while we Uploading your Image");
-                mDProgressialog.setCanceledOnTouchOutside(false);
-                mDProgressialog.show();
+                mDProgressDialog=new ProgressDialog(AccountSettingActivity.this);
+                mDProgressDialog.setTitle("Uploading Image");
+                mDProgressDialog.setMessage("please wait while we Uploading your Image");
+                mDProgressDialog.setCanceledOnTouchOutside(false);
+                mDProgressDialog.show();
 
                 Uri resultUri = result.getUri();
 
@@ -164,7 +181,7 @@ public class AccountSettingActivity extends AppCompatActivity {
 
     private void UploadImageInStorageDataBase(Uri resultUri){
         //upload image in storage database
-        final StorageReference FilePath = mStorageRef.child("profile_images").child(CureentUserId+"jpg");
+        final StorageReference FilePath = mStorageRef.child("profile_images").child(CurrentUserId+"jpg");
         FilePath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -176,11 +193,11 @@ public class AccountSettingActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()){
-                                    mDProgressialog.dismiss();
+                                    mDProgressDialog.dismiss();
                                     Toast.makeText(AccountSettingActivity.this,"your image uploaded successfully",Toast.LENGTH_SHORT).show(); }
                                 else{
                                     Toast.makeText(AccountSettingActivity.this,"Error in uploading",Toast.LENGTH_SHORT).show();
-                                    mDProgressialog.hide();}
+                                    mDProgressDialog.hide();}
                             }
                         });
 

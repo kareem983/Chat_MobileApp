@@ -59,7 +59,7 @@ public class FriendsChattingActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private String CurrentUID;
 
-    private ListView chatting_listView;;
+    private ListView chatting_listView;
     private ImageButton SendBtn;
     private ImageButton AddImageBtn;
     private EditText MessageEdit;

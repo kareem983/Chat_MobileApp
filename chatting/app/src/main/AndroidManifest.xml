@@ -10,7 +10,12 @@
         android:icon="@mipmap/appicon"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".Messageya">
+        <!-- Messageya offline capability class-->
+
+
+
         <activity android:name="com.example.chatting.DeleteAccountActivity"></activity>
         <activity android:name="com.example.chatting.ResetPasswordActivity" />
         <activity
