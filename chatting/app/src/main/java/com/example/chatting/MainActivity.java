@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void markMessagesOnlineState(){
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+       FirebaseUser currentUser = mAuth.getCurrentUser();
         CurrentUserId= currentUser.getUid();
 
 

@@ -4,16 +4,19 @@ public class Message {
 
     private String senderMessage;
     private String receiverMessage;
-    private String messageType;
-    private boolean IsImage;
+    private boolean IsSender;
+    private String MessageType;
     private Integer SeenStateNum;
+    private String MessageTime;
 
-    public Message(String senderMessage,String receiverMessage, String messageType, Integer SeenStateNum, boolean IsImage){
+
+    public Message(String senderMessage,String receiverMessage, boolean IsSender, Integer SeenStateNum, String MessageType,String MessageTime){
         this.senderMessage=senderMessage;
         this.receiverMessage=receiverMessage;
-        this.messageType=messageType;
+        this.IsSender=IsSender;
         this.SeenStateNum=SeenStateNum;
-        this.IsImage=IsImage;
+        this.MessageType=MessageType;
+        this.MessageTime=MessageTime;
     }
 
 
@@ -25,15 +28,19 @@ public class Message {
         return receiverMessage;
     }
 
-    public String getMessageType() {
-        return messageType;
+    public boolean getIsSender() {
+        return IsSender;
     }
 
     public Integer getSeenStateNum() {
         return SeenStateNum;
     }
 
-    public boolean isImage() {
-        return IsImage;
+    public String getMessageType() {
+        return MessageType;
+    }
+
+    public String getMessageTime(){
+        return MessageTime;
     }
 }

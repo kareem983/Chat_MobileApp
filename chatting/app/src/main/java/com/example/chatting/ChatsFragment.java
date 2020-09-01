@@ -200,6 +200,7 @@ public class ChatsFragment extends Fragment {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot Snapshot : dataSnapshot.getChildren()){
                         if(Snapshot.child("Message Type").getValue().equals("Image")) FinalMessage="Image";
+                        else if(Snapshot.child("Message Type").getValue().equals("Record")) FinalMessage="Audio";
                         else FinalMessage=Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length());
                     }
                 }

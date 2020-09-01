@@ -2,22 +2,36 @@ package com.example.chatting;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.icu.text.SimpleDateFormat;
+import android.media.MediaPlayer;
+import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,11 +49,17 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class FriendsChattingActivity extends AppCompatActivity {
 
@@ -59,13 +79,34 @@ public class FriendsChattingActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private String CurrentUID;
 
+    //xml
     private ListView chatting_listView;
-    private ImageButton SendBtn;
-    private ImageButton AddImageBtn;
+    private ImageButton SendImageBtn;
+    private ImageButton AddRecordBtn;
     private EditText MessageEdit;
+    private ImageButton SendMessageBtn;
+    private LinearLayout RecordContainer;
+    private TextView CancelRecord;
+    private Chronometer RecordTimer;
+    private ImageButton SendRecordBtn;
+
+    private MediaRecorder recorder;
+    private String mFileName=null;
+    private String mFilePath=null;
+
     private ArrayList<Message> chatting_arraylist;
     private static final int GALARY_PICK=1;
     private StorageReference mStorageRef;
+
+    private ImageView PlayOrPauseRecordBtn;
+    private MediaPlayer mediaPlayer;
+    private Runnable runnable;
+    private Handler handler;
+    private LinearLayout RecordLin;
+    private SeekBar SeekBar;
+    private ImageView playRecord;
+    private ImageView closeRecord;
+    private boolean isRecordSending;
 
 
     @Override
@@ -99,9 +140,22 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
 
         chatting_listView=(ListView)findViewById(R.id.Chatting_ListView);
-        SendBtn = (ImageButton)findViewById(R.id.sendBtn);
-        AddImageBtn=(ImageButton)findViewById(R.id.AddImageBtn);
+        SendImageBtn=(ImageButton)findViewById(R.id.SendImageBtn);
+        AddRecordBtn = (ImageButton)findViewById(R.id.AddRecordBtn);
         MessageEdit = (EditText)findViewById(R.id.messageEdit);
+        SendMessageBtn = (ImageButton)findViewById(R.id.sendMessageBtn);
+        RecordContainer = (LinearLayout)findViewById(R.id.RecordContainer);
+        CancelRecord =(TextView)findViewById(R.id.CancelRecord);
+        RecordTimer =(Chronometer)findViewById(R.id.RecordTimer);
+        SendRecordBtn =(ImageButton)findViewById(R.id.sendRecordBtn);
+
+        RecordLin = (LinearLayout)findViewById(R.id.RecordContainerInList);
+        SeekBar =(SeekBar)findViewById(R.id.SeekBar);
+        playRecord = (ImageView)findViewById(R.id.PlayOrPauseBtn);
+        closeRecord = (ImageView)findViewById(R.id.closeRecord);
+        handler=new Handler();
+        mediaPlayer = new MediaPlayer();
+
 
         chatting_arraylist =new ArrayList<>();
         final MessageAdapter adapter=new MessageAdapter(this,chatting_arraylist);
@@ -113,10 +167,17 @@ public class FriendsChattingActivity extends AppCompatActivity {
         // if any one send message to other
         ChangeInChatting();
 
+        //if the user play any record
+        playRecord();
 
-        AddImageBtn.setOnClickListener(new View.OnClickListener() {
+
+        //on click to send Image button
+        SendImageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mediaPlayer.stop();
+                RecordLin.setVisibility(View.GONE);
+
                 Intent intent =new Intent();
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -126,10 +187,71 @@ public class FriendsChattingActivity extends AppCompatActivity {
         });
 
 
-        //on click to send button
-        SendBtn.setOnClickListener(new View.OnClickListener() {
+        //on click to Add record button
+        AddRecordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mediaPlayer.stop();
+                RecordLin.setVisibility(View.GONE);
+
+                SendImageBtn.setEnabled(false);
+                AddRecordBtn.setEnabled(false);
+                MessageEdit.setEnabled(false);
+                SendMessageBtn.setEnabled(false);
+                RecordContainer.setVisibility(View.VISIBLE);
+                RecordTimer.setBase(SystemClock.elapsedRealtime());
+                RecordTimer.start();
+
+                if(checkPermission()) startRecording();
+            }
+        });
+
+
+        //on click to cancel record Text view
+        CancelRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer.stop();
+                RecordLin.setVisibility(View.GONE);
+
+                SendImageBtn.setEnabled(true);
+                AddRecordBtn.setEnabled(true);
+                MessageEdit.setEnabled(true);
+                SendMessageBtn.setEnabled(true);
+                RecordContainer.setVisibility(View.GONE);
+                RecordTimer.stop();
+
+            }
+        });
+
+
+        //on click to send record button
+        SendRecordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer.stop();
+                RecordLin.setVisibility(View.GONE);
+
+                SendImageBtn.setEnabled(true);
+                AddRecordBtn.setEnabled(true);
+                MessageEdit.setEnabled(true);
+                SendMessageBtn.setEnabled(true);
+                RecordContainer.setVisibility(View.GONE);
+                RecordTimer.stop();
+
+                //stop recording and save in storage database
+                stopRecording();
+            }
+        });
+
+
+        //on click to send message button
+        SendMessageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer.stop();
+                RecordLin.setVisibility(View.GONE);
+
                 final String message_value=MessageEdit.getText().toString();
                 if(message_value.isEmpty()) Toast.makeText(FriendsChattingActivity.this,"The message is empty",Toast.LENGTH_SHORT).show();
                 else{
@@ -143,6 +265,189 @@ public class FriendsChattingActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RecordLin.setVisibility(View.GONE);
+        mediaPlayer.stop();
+    }
+
+
+
+    private void playRecord(){
+        SeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                if(b)mediaPlayer.seekTo(i);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+
+        chatting_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final Message message =chatting_arraylist.get(i);
+                if(message.getSenderMessage().equals(" ")) {
+                    isRecordSending=false;
+                    PlayOrPauseRecordBtn = (ImageView)view.findViewById(R.id.ReceiverPlayOrPauseBtn);
+                }
+                else{
+                    isRecordSending =true;
+                    PlayOrPauseRecordBtn = (ImageView)view.findViewById(R.id.SenderPlayOrPauseBtn);
+                }
+
+
+                PlayOrPauseRecordBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        RecordLin.setVisibility(View.VISIBLE);
+                        PlayOrPauseRecordBtn.setEnabled(false);
+
+                        try {
+                            handler=new Handler();
+                            mediaPlayer = new MediaPlayer();
+
+                            if(isRecordSending)mediaPlayer.setDataSource(message.getSenderMessage());
+                            else mediaPlayer.setDataSource(message.getReceiverMessage());
+                            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                @Override
+                                public void onPrepared(MediaPlayer mediaPlayer) {
+                                    SeekBar.setMax(mediaPlayer.getDuration());
+                                    mediaPlayer.start();
+                                    playRecord.setImageResource(R.drawable.ic_baseline_pause_24);
+                                    ChangeSeekBar();
+                                }
+                            });
+                            mediaPlayer.prepare();
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+                        mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mediaPlayer) {
+                                RecordLin.setVisibility(View.GONE);
+                                PlayOrPauseRecordBtn.setEnabled(true);
+                            }
+                        });
+
+
+                    }
+                });
+
+            }
+        });
+
+        playRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(mediaPlayer.isPlaying()){
+                    mediaPlayer.pause();
+                    playRecord.setImageResource(R.drawable.ic_baseline_play_arrow_24);
+                }
+                else{
+                    mediaPlayer.start();
+                    playRecord.setImageResource(R.drawable.ic_baseline_pause_24);
+                    ChangeSeekBar();
+                }
+
+            }
+        });
+
+        closeRecord.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mediaPlayer.stop();
+                RecordLin.setVisibility(View.GONE);
+                PlayOrPauseRecordBtn.setEnabled(true);
+            }
+        });
+
+    }
+
+
+
+    private void ChangeSeekBar() {
+        SeekBar.setProgress(mediaPlayer.getCurrentPosition());
+        if(mediaPlayer.isPlaying()){
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    ChangeSeekBar();
+                }
+            };
+            handler.postDelayed(runnable,1000);
+        }
+    }
+
+    //**********************************************************************************************
+    private void startRecording() {
+        mFilePath = this.getExternalFilesDir("/").getAbsolutePath();
+        mFileName = random()+".3gp";
+
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setOutputFile(mFilePath+"/"+mFileName);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            recorder.prepare();
+        } catch (IOException e) {
+            Log.e("Record_Log","prepare() failed");
+        }
+
+        recorder.start();
+    }
+
+    private void stopRecording() {
+        recorder.stop();
+        recorder.release();
+        recorder = null;
+
+        uploadRecord();
+    }
+
+
+    private void uploadRecord(){
+       final  StorageReference FilePath = mStorageRef.child("message_records").child(random()+".3gp");
+       Uri uri = Uri.fromFile(new File(mFilePath+"/"+mFileName));
+
+        FilePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                FilePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        //Toast.makeText(FriendsChattingActivity.this,"save",Toast.LENGTH_SHORT).show();
+                        sendImageOrRecord(uri,"Record");
+                    }
+                });
+            }
+        });
+
+    }
+
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(),
+                WRITE_EXTERNAL_STORAGE);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(),
+                RECORD_AUDIO);
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED;
+    }
+
+
+//**********************************************************************************************
+
+
 
     private void markAllFriendMessagesAsSeen(){
         //mark all the sent friend's messages seen because me seen now
@@ -154,7 +459,6 @@ public class FriendsChattingActivity extends AppCompatActivity {
                 if(dataSnapshot.exists()){
                     for(DataSnapshot Snapshot : dataSnapshot.getChildren()){
                         if(Snapshot.child("Message").getValue().toString().substring(0,1).equals("S")) {
-                            //Toast.makeText(FriendsChattingActivity.this,Snapshot.getKey().toString(),Toast.LENGTH_SHORT).show();
                             FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).child(Snapshot.getKey().toString()).child("Message State").setValue("3");
                         }
                     }
@@ -172,6 +476,7 @@ public class FriendsChattingActivity extends AppCompatActivity {
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
         DatabaseReference m = root.child("users").child(UserId);
         ValueEventListener eventListener = new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -186,6 +491,7 @@ public class FriendsChattingActivity extends AppCompatActivity {
                     SendHashMap.put("Message State",String.valueOf(x));
                     SendHashMap.put("Message","S"+message_value);
                     SendHashMap.put("Message Type","Message");
+                    SendHashMap.put("Message Time",new SimpleDateFormat("hh:mm a").format(Calendar.getInstance().getTime()));
 
 
                     //receive message
@@ -193,6 +499,8 @@ public class FriendsChattingActivity extends AppCompatActivity {
                     ReceiveHashMap.put("Message State","null");
                     ReceiveHashMap.put("Message","R"+message_value);
                     ReceiveHashMap.put("Message Type","Message");
+                    ReceiveHashMap.put("Message Time",new SimpleDateFormat("hh:mm a").format(Calendar.getInstance().getTime()));
+
 
                     FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).push().setValue(SendHashMap);
                     FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).push().setValue(ReceiveHashMap);
@@ -206,6 +514,7 @@ public class FriendsChattingActivity extends AppCompatActivity {
         m.addListenerForSingleValueEvent(eventListener);
 
     }
+
 
 
 
@@ -241,7 +550,6 @@ public class FriendsChattingActivity extends AppCompatActivity {
                     else if(stat.equals("online")) x=2;
                     else if(stat.equals("seen")) x=3;
 
-                   // Toast.makeText(FriendsChattingActivity.this,""+x,Toast.LENGTH_SHORT).show();
                     if(x==3){  // so the friend seen now
                         DatabaseReference root= FirebaseDatabase.getInstance().getReference();
                         DatabaseReference m=root.child("chats").child(CurrentUID).child(UserId);
@@ -251,7 +559,6 @@ public class FriendsChattingActivity extends AppCompatActivity {
                                 if(dataSnapshot.exists()){
                                     for(DataSnapshot Snapshot : dataSnapshot.getChildren()){
                                         if(Snapshot.child("Message").getValue().toString().substring(0,1).equals("S")) {
-                                            //Toast.makeText(FriendsChattingActivity.this,Snapshot.getKey().toString(),Toast.LENGTH_SHORT).show();
                                             FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).child(Snapshot.getKey().toString()).child("Message State").setValue("3");
                                         }
                                     }
@@ -303,26 +610,36 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
         chatting_arraylist.clear();
 
-        // Toast.makeText(FriendsChattingActivity.this,"ssss",Toast.LENGTH_SHORT).show();
         for(DataSnapshot Snapshot : data.getChildren()){
 
             if (Snapshot.child("Message").getValue().toString().substring(0,1).equals("S")) {
                 if(Snapshot.child("Message Type").getValue().equals("Image")){
-                    chatting_arraylist.add(new Message(Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), " ", "S",
-                            Integer.valueOf(Snapshot.child("Message State").getValue().toString()),true));
+                    chatting_arraylist.add(new Message(Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), " ", true,
+                            Integer.valueOf(Snapshot.child("Message State").getValue().toString()),"Image",Snapshot.child("Message Time").getValue().toString()));
                 }
-                else {
-                    chatting_arraylist.add(new Message(Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), " ", "S",
-                            Integer.valueOf(Snapshot.child("Message State").getValue().toString()),false));
+                else if(Snapshot.child("Message Type").getValue().equals("Message")){
+                    chatting_arraylist.add(new Message(Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), " ", true,
+                            Integer.valueOf(Snapshot.child("Message State").getValue().toString()),"Message",Snapshot.child("Message Time").getValue().toString()));
                 }
+                else if(Snapshot.child("Message Type").getValue().equals("Record")){
+                    chatting_arraylist.add(new Message(Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), " ", true,
+                            Integer.valueOf(Snapshot.child("Message State").getValue().toString()),"Record",Snapshot.child("Message Time").getValue().toString()));
+                }
+
             }
 
             else {
                 if(Snapshot.child("Message Type").getValue().equals("Image")){
-                    chatting_arraylist.add(new Message(" ", Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), "R", 0,true));
+                    chatting_arraylist.add(new Message(" ", Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), false
+                            , 0,"Image",Snapshot.child("Message Time").getValue().toString()));
                 }
-                else {
-                    chatting_arraylist.add(new Message(" ", Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), "R", 0,false));
+                else if(Snapshot.child("Message Type").getValue().equals("Message")){
+                    chatting_arraylist.add(new Message(" ", Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), false
+                            , 0,"Message",Snapshot.child("Message Time").getValue().toString()));
+                }
+                else if(Snapshot.child("Message Type").getValue().equals("Record")){
+                    chatting_arraylist.add(new Message(" ", Snapshot.child("Message").getValue().toString().substring(1, Snapshot.child("Message").getValue().toString().length()), false
+                            , 0,"Record",Snapshot.child("Message Time").getValue().toString()));
                 }
             }
         }
@@ -393,6 +710,7 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
 
 
+
     private void DeleteMessage(){
         //long click in any message
         chatting_listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -412,11 +730,11 @@ public class FriendsChattingActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(message.getSeenStateNum() == 0 ){
-                            Toast.makeText(FriendsChattingActivity.this,"you can't delete the message that\nyour friend sent it before",Toast.LENGTH_LONG).show();
+                            Toast.makeText(FriendsChattingActivity.this,"you can't delete this message for Everyone\nthat your friend sent it before",Toast.LENGTH_LONG).show();
                             dialog.cancel();
                         }
                         else if(message.getSeenStateNum() == 3 ){
-                            Toast.makeText(FriendsChattingActivity.this,"you can't delete this message\nyour friend seen this message",Toast.LENGTH_LONG).show();
+                            Toast.makeText(FriendsChattingActivity.this,"you can't delete this message for Everyone\nyour friend seen this message",Toast.LENGTH_LONG).show();
                             dialog.cancel();
                         }
                         else {
@@ -564,7 +882,7 @@ public class FriendsChattingActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Uri uri) {
                         //save download url to image child
-                        sendImage(uri);
+                        sendImageOrRecord(uri,"Image");
                     }
                 });
 
@@ -574,10 +892,11 @@ public class FriendsChattingActivity extends AppCompatActivity {
     }
 
 
-    private void sendImage(final Uri uri){
+    private void sendImageOrRecord(final Uri uri,final String type){
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
         DatabaseReference m = root.child("users").child(UserId);
         ValueEventListener eventListener = new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -591,12 +910,15 @@ public class FriendsChattingActivity extends AppCompatActivity {
                     HashMap <String,String> SendImageHashMap= new HashMap<>();
                     SendImageHashMap.put("Message State",String.valueOf(x));
                     SendImageHashMap.put("Message","S"+uri.toString());
-                    SendImageHashMap.put("Message Type","Image");
+                    SendImageHashMap.put("Message Type",type);
+                    SendImageHashMap.put("Message Time",new SimpleDateFormat("hh:mm a").format(Calendar.getInstance().getTime()));
+
 
                     HashMap <String,String> ReceiveImageHashMap= new HashMap<>();
                     ReceiveImageHashMap.put("Message State","null");
                     ReceiveImageHashMap.put("Message","R"+uri.toString());
-                    ReceiveImageHashMap.put("Message Type","Image");
+                    ReceiveImageHashMap.put("Message Type",type);
+                    ReceiveImageHashMap.put("Message Time",new SimpleDateFormat("hh:mm a").format(Calendar.getInstance().getTime()));
 
                     FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId).push().setValue(SendImageHashMap);
                     FirebaseDatabase.getInstance().getReference().child("chats").child(UserId).child(CurrentUID).push().setValue(ReceiveImageHashMap);

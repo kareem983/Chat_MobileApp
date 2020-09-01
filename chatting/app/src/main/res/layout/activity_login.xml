@@ -90,9 +90,9 @@
         android:layout_below="@id/LoginPasswordEditt"
         android:text="Forget your password?"
         android:textColor="#000"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="15dp"
         android:textSize="17dp"
-        android:layout_marginLeft="45dp"
+        android:layout_marginLeft="50dp"
         android:textStyle="italic"/>
 
 
