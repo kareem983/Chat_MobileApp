@@ -1,5 +1,5 @@
 package com.example.chatting;
-
+ 
 public class Message {
     private String senderMessage;
     private String receiverMessage;

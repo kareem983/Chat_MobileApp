@@ -1,5 +1,5 @@
 package com.example.chatting;
-
+ 
 public class Friends {
     private String FriendId;
     private String FriendName;

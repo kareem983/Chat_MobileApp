@@ -1,5 +1,5 @@
 package com.example.chatting;
-
+ 
 import android.content.Context;
 
 public class GetTimeAgo {
