@@ -10,9 +10,8 @@ public class Messageya extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //offline
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
-
 
         /*Picasso*/
         Picasso.Builder builder = new Picasso.Builder(this);

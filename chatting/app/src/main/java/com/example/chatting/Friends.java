@@ -19,7 +19,6 @@ public class Friends {
         this.IsOnline=IsOnline;
     }
 
-
     public String getFriendId() {
         return FriendId;
     }

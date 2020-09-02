@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
+
     <include layout="@layout/app_bar_layout"
         android:id="@+id/LoginToolBar"/>
 
@@ -14,7 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/LoginToolBar"
+        android:layout_above="@id/LoginHeadertext"
         android:layout_marginBottom="25dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
@@ -25,7 +26,7 @@
         android:id="@+id/LoginHeadertext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Loginicon"
+        android:layout_above="@id/LoginEmailEditt"
         android:text="User Login"
         android:layout_centerHorizontal="true"
         android:textSize="25dp"
@@ -40,7 +41,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
-        android:layout_below="@id/LoginHeadertext"
+        android:layout_centerVertical="true"
         android:background="@drawable/button2">
 
         <com.google.android.material.textfield.TextInputEditText

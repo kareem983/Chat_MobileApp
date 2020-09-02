@@ -47,7 +47,6 @@
             android:background="@drawable/button4"
             android:visibility="gone">
 
-
             <ImageView
                 android:id="@+id/ReceiverPlayOrPauseBtn"
                 android:layout_width="wrap_content"
@@ -165,6 +164,5 @@
         </LinearLayout>
 
     </LinearLayout>
-
 
 </RelativeLayout>

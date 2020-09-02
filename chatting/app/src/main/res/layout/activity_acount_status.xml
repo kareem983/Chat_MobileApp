@@ -12,9 +12,11 @@
 
     <LinearLayout
         android:id="@+id/Container"
-        android:layout_width="350dp"
-        android:layout_height="400dp"
+        android:layout_width="match_parent"
+        android:layout_height="270dp"
         android:orientation="vertical"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:background="@drawable/button4"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true">
@@ -34,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
         android:background="@drawable/button2">
@@ -84,7 +86,7 @@
         android:textSize="18dp"
         android:textColor="#FFF"
         android:padding="10dp"
-        android:layout_marginTop="125dp"/>
+        android:layout_marginTop="85dp"/>
 
     </LinearLayout>
 

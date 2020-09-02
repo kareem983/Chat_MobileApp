@@ -5,14 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UsersAdapter extends ArrayAdapter<Users> {
@@ -29,38 +24,27 @@ public class UsersAdapter extends ArrayAdapter<Users> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Check if the existing view is being reused, otherwise inflate the view
-        View listItemView = convertView;
+        View ListItemView = convertView;
 
-        if(listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(
+        if(ListItemView == null) {
+            ListItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.users_list, parent, false);
         }
 
         // Get the {@link AndroidFlavor} object located at this position in the chating_list
         Users currentUser = getItem(position);
 
+        //define xml components
+        CircleImageView UserImage = (CircleImageView) ListItemView.findViewById(R.id.UserImage);
+        TextView UserName = (TextView) ListItemView.findViewById(R.id.UserName);
+        TextView UserStatus = (TextView)ListItemView.findViewById(R.id.UserStatus);
 
 
-        CircleImageView UserImage = (CircleImageView) listItemView.findViewById(R.id.UserImage);
-        // Get the image resource ID from the current AndroidFlavor object and
-        // set the image to iconView
         Picasso.get().load(currentUser.getUserImage()).placeholder(R.drawable.user).into(UserImage);
-
-        // Find the TextView in the list_item.xml layout with the ID version_name
-        TextView UserName = (TextView) listItemView.findViewById(R.id.UserName);
-        // Get the version name from the current AndroidFlavor object and
-        // set this text on the name TextView
         UserName.setText(currentUser.getUserName());
-
-
-        TextView UserStatus = (TextView)listItemView.findViewById(R.id.UserStatus);
-
         UserStatus.setText(currentUser.getUserStatus());
 
-        // Return the whole chating_list item layout (containing 2 TextViews and an ImageView)
-        // so that it can be shown in the ListView
-        return listItemView;
+        return ListItemView;
     }
-
 
 }

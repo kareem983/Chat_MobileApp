@@ -14,12 +14,14 @@
     <include layout="@layout/app_bar_layout"
         android:id="@+id/MainToolBar"/>
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/MainTabLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/MainTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+
     </com.google.android.material.appbar.AppBarLayout>
+
 
 
     <androidx.viewpager.widget.ViewPager

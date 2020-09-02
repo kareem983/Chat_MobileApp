@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,22 +22,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class RequestProfileActivity extends AppCompatActivity {
     private Toolbar mToolBar;
-    private ProgressDialog mProgressDialog;
-
     private ImageView UserImageView;
     private TextView UserNameView;
     private TextView UserStatusView;
     private TextView UserTotalFriendsView;
     private Button ConfirmRequestBtn;
     private Button RejectRequestBtn;
-
-
+    private ProgressDialog mProgressDialog;
     private String UserId;
     private String UserName;
     private String UserStatus;
@@ -48,12 +42,9 @@ public class RequestProfileActivity extends AppCompatActivity {
     private int numbOfMutualFriends;
     private ArrayList<String> CurrentUserFriends;
     private ArrayList<String> UserFriends;
-
-
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String CurrentUId;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +71,7 @@ public class RequestProfileActivity extends AppCompatActivity {
         CurrentUserFriends=new ArrayList<>();
         UserFriends=new ArrayList<>();
 
-        //define xml views
+        //define xml components
         UserImageView=(ImageView)findViewById(R.id.RequestProfileImage);
         UserNameView=(TextView)findViewById(R.id.RequestProfileName);
         UserStatusView=(TextView)findViewById(R.id.RequestProfileStatus);
@@ -99,7 +90,6 @@ public class RequestProfileActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference().child("requests").child("1").setValue("1");
         FirebaseDatabase.getInstance().getReference().child("friends").child("1").setValue("1");
         FirebaseDatabase.getInstance().getReference().child("chats").child("1").setValue("1");
-
 
 
         //buttons clicks
@@ -257,7 +247,5 @@ public class RequestProfileActivity extends AppCompatActivity {
         x.addListenerForSingleValueEvent(EventListener);
 
     }
-
-
 
 }

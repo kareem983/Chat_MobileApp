@@ -159,7 +159,4 @@
         android:layout_marginBottom="40dp"
         android:visibility="gone"/>
 
-
-
-
 </RelativeLayout>

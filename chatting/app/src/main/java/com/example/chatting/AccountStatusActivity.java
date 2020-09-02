@@ -3,19 +3,13 @@ package com.example.chatting;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -28,16 +22,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class AccountStatusActivity extends AppCompatActivity {
-
+    private Toolbar mToolBar;
     private TextView StringCount;
     private TextWatcher textWatcher;
     private TextInputEditText StatusText;
     private Button SaveChangesBtn;
+    private TextView AlertMessage;
     private ProgressDialog mProgressBar;
-    private Toolbar mToolBar;
     private final int STATUS_MAX_SIZE=38;
     private FirebaseAuth mAuth;
-    private TextView AlertMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +38,13 @@ public class AccountStatusActivity extends AppCompatActivity {
         setContentView(R.layout.activity_acount_status);
         mAuth=FirebaseAuth.getInstance();
 
+        //define xml components
         StatusText=(TextInputEditText) findViewById(R.id.StatusEdit);
         SaveChangesBtn=(Button)findViewById(R.id.changeStatusBtn);
         StringCount=(TextView)findViewById(R.id.StringCount);
         AlertMessage=(TextView)findViewById(R.id.AlertMessage);
 
+        //toolbar
         mToolBar=(Toolbar)findViewById(R.id.StatusToolBar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("Account Status");

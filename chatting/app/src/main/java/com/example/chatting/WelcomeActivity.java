@@ -1,7 +1,6 @@
 package com.example.chatting;
 
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +12,6 @@ public class WelcomeActivity extends AppCompatActivity {
     private Button GoToLogin_Btn;
     public static Activity fa;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,20 +21,19 @@ public class WelcomeActivity extends AppCompatActivity {
         GoToRegister_Btn=(Button)findViewById(R.id.GoToRegisterBtn);
         GoToLogin_Btn=(Button)findViewById(R.id.GoToLoginBtn);
 
-
         GoToRegister_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent =new Intent(WelcomeActivity.this,RegisterActivity.class);
-                startActivity(intent);
+                Intent RegisterIntent =new Intent(WelcomeActivity.this,RegisterActivity.class);
+                startActivity(RegisterIntent);
             }
         });
 
         GoToLogin_Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent =new Intent(WelcomeActivity.this,LoginActivity.class);
-                startActivity(intent);
+                Intent LoginIntent =new Intent(WelcomeActivity.this,LoginActivity.class);
+                startActivity(LoginIntent);
             }
         });
 

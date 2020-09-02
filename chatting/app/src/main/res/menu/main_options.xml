@@ -2,22 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <item
         android:id="@+id/AccountSetting_id"
         android:title="Account Setting"/>
-
     <item
         android:id="@+id/AllUsers_id"
         android:title="All Users"/>
-
     <item
         android:id="@+id/DeleteAccount_id"
         android:title="Delete Account"/>
-
     <item
         android:id="@+id/Logout_id"
         android:title="Log Out"/>
-
 
 </menu>

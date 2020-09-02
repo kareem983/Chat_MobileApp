@@ -3,7 +3,6 @@ package com.example.chatting;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -22,20 +20,16 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 public class DeleteAccountActivity extends AppCompatActivity {
-
     private TextInputEditText Email_Edit;
     private Button DeleteBtn;
-
+    private ProgressDialog mProgressDialog;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String CurrentUserId;
     private String CurrentUserEmail;
-    private ProgressDialog mProgressDialog;
-    private StorageReference mStorageRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +38,8 @@ public class DeleteAccountActivity extends AppCompatActivity {
         currentUser=mAuth.getCurrentUser();
         CurrentUserId = currentUser.getUid();
         CurrentUserEmail = currentUser.getEmail();
-        mStorageRef= FirebaseStorage.getInstance().getReference();
 
+        //define xml components
         Email_Edit = (TextInputEditText)findViewById(R.id.DeleteEdit);
         DeleteBtn = (Button)findViewById(R.id.DeleteBtn);
 
@@ -61,7 +55,6 @@ public class DeleteAccountActivity extends AppCompatActivity {
                 }
             }
         });
-
 
     }
 
@@ -94,7 +87,7 @@ public class DeleteAccountActivity extends AppCompatActivity {
                         }
                         else {
                             mProgressDialog.hide();
-                            Toast.makeText(DeleteAccountActivity.this,"Wrong Email",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DeleteAccountActivity.this,"Failed deleting this account",Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

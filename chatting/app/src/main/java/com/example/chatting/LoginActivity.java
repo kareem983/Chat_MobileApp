@@ -3,7 +3,6 @@ package com.example.chatting;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -19,7 +17,6 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginActivity extends AppCompatActivity {
-
     private Toolbar mToolBar;
     private TextInputEditText emailText;
     private TextInputEditText passwordText;
@@ -36,11 +33,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         mAuth=FirebaseAuth.getInstance();
 
+        //toolbar
         mToolBar= (Toolbar)findViewById(R.id.LoginToolBar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("Login");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        //define xml components
         emailText=(TextInputEditText)findViewById(R.id.LoginEmailEdit);
         passwordText=(TextInputEditText)findViewById(R.id.LoginPasswordEdit);
         LoginBtn=(Button)findViewById(R.id.LoginBtn);

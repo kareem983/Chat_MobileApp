@@ -8,7 +8,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,7 +33,6 @@ import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -48,37 +46,18 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class FriendsChattingActivity extends AppCompatActivity {
-
     private Toolbar mToolBar;
-
-    private String UserId;
-    private String UserName;
-    private String UserImage;
-    private String UserOnLine;
-
-    //custom action bar items
-    private TextView custom_UserName;
-    private TextView custom_UserOnline;
-    private CircleImageView custom_UserImage;
-
-    private FirebaseAuth mAuth;
-    private FirebaseUser currentUser;
-    private String CurrentUID;
-
     //xml
     private ListView chatting_listView;
     private ImageButton SendImageBtn;
@@ -89,15 +68,23 @@ public class FriendsChattingActivity extends AppCompatActivity {
     private TextView CancelRecord;
     private Chronometer RecordTimer;
     private ImageButton SendRecordBtn;
-
+    //custom action bar items
+    private TextView custom_UserName;
+    private TextView custom_UserOnline;
+    private CircleImageView custom_UserImage;
+    //user variables
+    private String UserId;
+    private String UserName;
+    private String UserImage;
+    private String UserOnLine;
+    //firebase
+    private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
+    private String CurrentUID;
+    //record variables
     private MediaRecorder recorder;
     private String mFileName=null;
     private String mFilePath=null;
-
-    private ArrayList<Message> chatting_arraylist;
-    private static final int GALARY_PICK=1;
-    private StorageReference mStorageRef;
-
     private ImageView PlayOrPauseRecordBtn;
     private MediaPlayer mediaPlayer;
     private Runnable runnable;
@@ -107,7 +94,9 @@ public class FriendsChattingActivity extends AppCompatActivity {
     private ImageView playRecord;
     private ImageView closeRecord;
     private boolean isRecordSending;
-
+    private ArrayList<Message> chatting_arraylist;
+    private static final int GALARY_PICK=1;
+    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,21 +113,21 @@ public class FriendsChattingActivity extends AppCompatActivity {
         UserImage=getIntent().getStringExtra("User Image");
 
 
-
         MainActivity.isFinished=false;
         FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Online").setValue("true");
         FirebaseDatabase.getInstance().getReference().child("users").child(CurrentUID).child("Seen").setValue("seen");
 
+
         //mark all the friend messages as seen mark because am seen now
         markAllFriendMessagesAsSeen();
 
-
         //define and show Actionbar
         show_ActionBar();
+
         //display user data in action bar
         displayUserDataInActionBar();
 
-
+        //define xml components
         chatting_listView=(ListView)findViewById(R.id.Chatting_ListView);
         SendImageBtn=(ImageButton)findViewById(R.id.SendImageBtn);
         AddRecordBtn = (ImageButton)findViewById(R.id.AddRecordBtn);
@@ -148,7 +137,6 @@ public class FriendsChattingActivity extends AppCompatActivity {
         CancelRecord =(TextView)findViewById(R.id.CancelRecord);
         RecordTimer =(Chronometer)findViewById(R.id.RecordTimer);
         SendRecordBtn =(ImageButton)findViewById(R.id.sendRecordBtn);
-
         RecordLin = (LinearLayout)findViewById(R.id.RecordContainerInList);
         SeekBar =(SeekBar)findViewById(R.id.SeekBar);
         playRecord = (ImageView)findViewById(R.id.PlayOrPauseBtn);
@@ -517,7 +505,6 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
 
 
-
     private void ChangeInChatting(){
 
         DatabaseReference mFirebase= FirebaseDatabase.getInstance().getReference().child("chats").child(CurrentUID).child(UserId);
@@ -648,9 +635,6 @@ public class FriendsChattingActivity extends AppCompatActivity {
 
         chatting_listView.setAdapter(adapter);
     }
-
-
-
 
 
 
@@ -838,7 +822,6 @@ public class FriendsChattingActivity extends AppCompatActivity {
         m.addListenerForSingleValueEvent(eventListener);
 
     }
-
 
 
 

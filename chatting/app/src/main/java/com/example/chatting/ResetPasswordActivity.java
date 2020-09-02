@@ -2,23 +2,19 @@ package com.example.chatting;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class ResetPasswordActivity extends AppCompatActivity {
-
     private TextInputEditText Email_Edit;
     private Button SendBtn;
-
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -26,6 +22,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
 
+        //define xml components
         Email_Edit=(TextInputEditText)findViewById(R.id.ResetEdit);
         SendBtn = (Button)findViewById(R.id.ResetBtn);
 

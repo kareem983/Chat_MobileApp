@@ -18,17 +18,14 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
             ChatsFragment chatsFragment =new ChatsFragment();
             return chatsFragment;
         }
-
         else if(position==1){
             FriendsFragment firendsFragment =new FriendsFragment();
             return firendsFragment;
         }
-
         else if(position==2){
             RequestsFragment requestsFragment =new RequestsFragment();
             return requestsFragment;
         }
-
         else return null;
     }
 
@@ -41,16 +38,13 @@ public class SectionPagerAdapter extends FragmentPagerAdapter {
         if(position==0){
             return "Chats";
         }
-
         else if(position==1){
             return "Friends";
         }
-
         else if(position==2){
             return "Requests";
         }
         else return null;
     }
-
 
 }

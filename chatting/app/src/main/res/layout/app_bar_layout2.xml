@@ -5,5 +5,4 @@
     android:layout_height="wrap_content"
     android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar">
 
-
 </androidx.appcompat.widget.Toolbar>

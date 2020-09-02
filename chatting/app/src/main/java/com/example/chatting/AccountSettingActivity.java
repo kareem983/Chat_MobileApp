@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -31,12 +29,9 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
-
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AccountSettingActivity extends AppCompatActivity {
-
     private CircleImageView UserImage;
     private TextView UserName;
     private TextView UserStatus;
@@ -44,14 +39,11 @@ public class AccountSettingActivity extends AppCompatActivity {
     private Button ImageBtn;
     private Toolbar mToolBar;
     private ProgressDialog mDProgressDialog;
-
     private static final int GALARY_PICK=1;
     private String CurrentUserId;
-
     private FirebaseAuth mAuth;
     private DatabaseReference mUserDatabase;
     private StorageReference mStorageRef;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +58,7 @@ public class AccountSettingActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Account Setting");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //define xml views
+        //define xml components
         UserImage=(CircleImageView)findViewById(R.id.UserImage);
         UserName=(TextView)findViewById(R.id.UserName);
         UserStatus=(TextView)findViewById(R.id.UserStatus);

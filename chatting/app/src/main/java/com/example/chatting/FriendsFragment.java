@@ -2,17 +2,13 @@ package com.example.chatting;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,11 +16,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class FriendsFragment extends Fragment {
-
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -36,13 +30,10 @@ public class FriendsFragment extends Fragment {
     private ArrayList<String> FriendsId;
     private ArrayList <Friends>FriendsArrayList;
     private ArrayList <String>FriendsDates;
-
     private ListView UserFriendsListView;
-    private DatabaseReference mDatabaseReference;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String CurrentUId;
-
 
 
     public FriendsFragment() {
@@ -66,15 +57,13 @@ public class FriendsFragment extends Fragment {
     }
 
 
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mMainView= inflater.inflate(R.layout.fragment_friends, container, false);
 
-        //define list view
+        //define xml component
         UserFriendsListView=(ListView)mMainView.findViewById(R.id.UserFriends_ListView_id);
 
         SomeProcess();
@@ -138,8 +127,6 @@ public class FriendsFragment extends Fragment {
        };
        m.addListenerForSingleValueEvent(eventListener);
 
-
-
    }
 
 
@@ -200,7 +187,5 @@ public class FriendsFragment extends Fragment {
         UserFriendsListView.setAdapter(adapter);
 
     }
-
-
 
 }

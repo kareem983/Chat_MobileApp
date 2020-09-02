@@ -26,24 +26,24 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.1.0'
-
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.firebase:firebase-database:19.3.1' //19.3.1
-    implementation 'com.google.firebase:firebase-auth:19.3.2' //19.3.2
+    implementation 'com.google.firebase:firebase-database:19.3.1'
+    implementation 'com.google.firebase:firebase-auth:19.3.2'
+
+    //material design
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //Circle image
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    implementation 'com.google.android.material:material:1.1.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
     //image cropper
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 
-    //download image from storage database
-    implementation 'com.squareup.picasso:picasso:2.71828' //2.71828
+    //(Picasso Library)download image from storage database
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
-    implementation 'com.google.firebase:firebase-storage:19.1.1' //19.1.1
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
 
     /*
     //firebase recycler view

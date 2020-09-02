@@ -12,7 +12,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 public class MessageAdapter extends ArrayAdapter<Message> {
-
     //Sender xml
     private LinearLayout sendContainer;
     private TextView senderTextView;
@@ -20,8 +19,6 @@ public class MessageAdapter extends ArrayAdapter<Message> {
     private LinearLayout SendRecordContainer;
     private TextView SendMessageTime;
     private ImageView seenIcon;
-
-
     //Receiver xml
     private LinearLayout ReceiveContainer;
     private TextView receiverTextView;
@@ -37,30 +34,29 @@ public class MessageAdapter extends ArrayAdapter<Message> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View listItemView = convertView;
-        if(listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(
+        View ListItemView = convertView;
+        if(ListItemView == null) {
+            ListItemView = LayoutInflater.from(getContext()).inflate(
                     R.layout.message_list, parent, false);
         }
 
-
         final Message currentMessage = getItem(position);
 
+        //define xml components
         //Sender xml
-        sendContainer = (LinearLayout)listItemView.findViewById(R.id.SContainer);
-        senderTextView = (TextView) listItemView.findViewById(R.id.sender_inList);
-        senderImage = (ImageView)listItemView.findViewById(R.id.sender_Image);
-        SendRecordContainer = (LinearLayout)listItemView.findViewById(R.id.senderRecordContainerInList);
-        SendMessageTime = (TextView)listItemView.findViewById(R.id.SendMessageTime);
-        seenIcon = (ImageView)listItemView.findViewById(R.id.seenIcon);
-
+        sendContainer = (LinearLayout)ListItemView.findViewById(R.id.SContainer);
+        senderTextView = (TextView) ListItemView.findViewById(R.id.sender_inList);
+        senderImage = (ImageView)ListItemView.findViewById(R.id.sender_Image);
+        SendRecordContainer = (LinearLayout)ListItemView.findViewById(R.id.senderRecordContainerInList);
+        SendMessageTime = (TextView)ListItemView.findViewById(R.id.SendMessageTime);
+        seenIcon = (ImageView)ListItemView.findViewById(R.id.seenIcon);
 
         //Receiver xml
-        ReceiveContainer = (LinearLayout)listItemView.findViewById(R.id.RContainer);
-        receiverTextView = (TextView) listItemView.findViewById(R.id.receiver_inList);
-        ReceiveImage = (ImageView)listItemView.findViewById(R.id.Receiver_Image);
-        ReceiveRecordContainer = (LinearLayout)listItemView.findViewById(R.id.ReceiverRecordContainerInList);
-        ReceiveMessageTime = (TextView)listItemView.findViewById(R.id.ReceiveMessageTime);
+        ReceiveContainer = (LinearLayout)ListItemView.findViewById(R.id.RContainer);
+        receiverTextView = (TextView) ListItemView.findViewById(R.id.receiver_inList);
+        ReceiveImage = (ImageView)ListItemView.findViewById(R.id.Receiver_Image);
+        ReceiveRecordContainer = (LinearLayout)ListItemView.findViewById(R.id.ReceiverRecordContainerInList);
+        ReceiveMessageTime = (TextView)ListItemView.findViewById(R.id.ReceiveMessageTime);
 
 
         // Receiver Container
@@ -142,7 +138,7 @@ public class MessageAdapter extends ArrayAdapter<Message> {
         });
 
 
-        return listItemView;
+        return ListItemView;
     }
 
 }

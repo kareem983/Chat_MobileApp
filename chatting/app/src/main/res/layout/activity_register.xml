@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".RegisterActivity">
 
+
     <include layout="@layout/app_bar_layout"
     android:id="@+id/registerToolBar"/>
 
@@ -14,14 +15,14 @@
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_centerHorizontal="true"
-        android:layout_below="@id/registerToolBar"
+        android:layout_above="@id/RegisterHeadertext"
         android:src="@drawable/registericon" />
-<!--#353c7c-->
+
     <TextView
         android:id="@+id/RegisterHeadertext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/Registericon"
+        android:layout_above="@id/RegisterNameEditt"
         android:text="User Registration"
         android:layout_centerHorizontal="true"
         android:textSize="25dp"
@@ -36,7 +37,7 @@
         android:layout_marginTop="15dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
-        android:layout_below="@id/RegisterHeadertext"
+        android:layout_above="@id/RegisterEmailEditt"
         android:background="@drawable/button2">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -62,7 +63,7 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
-        android:layout_below="@id/RegisterNameEditt"
+        android:layout_centerVertical="true"
         android:background="@drawable/button2">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -166,6 +167,6 @@
         android:background="@drawable/button2"
         android:textColor="#000"
         android:padding="15dp"
-        android:textSize="15dp" />
+        android:textSize="15dp"/>
 
 </RelativeLayout>

@@ -3,12 +3,10 @@ package com.example.chatting;
 import android.content.Context;
 
 public class GetTimeAgo {
-
     private static final int SECOND_MILLIS = 1000;
     private static final int MINUTE_MILLIS = 60 * SECOND_MILLIS;
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
-
 
 
     public static String getTimeAgo(long time, Context ctx) {
@@ -22,7 +20,7 @@ public class GetTimeAgo {
             return null;
         }
 
-        // TODO: localize
+
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {
             return "just now";

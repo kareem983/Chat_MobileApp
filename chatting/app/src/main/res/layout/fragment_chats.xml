@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     tools:context=".ChatsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <ListView
         android:id="@+id/UserChats_ListView_id"
         android:layout_width="match_parent"

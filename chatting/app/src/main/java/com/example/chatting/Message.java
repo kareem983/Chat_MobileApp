@@ -1,14 +1,12 @@
 package com.example.chatting;
 
 public class Message {
-
     private String senderMessage;
     private String receiverMessage;
     private boolean IsSender;
-    private String MessageType;
     private Integer SeenStateNum;
+    private String MessageType;
     private String MessageTime;
-
 
     public Message(String senderMessage,String receiverMessage, boolean IsSender, Integer SeenStateNum, String MessageType,String MessageTime){
         this.senderMessage=senderMessage;

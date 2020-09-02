@@ -3,13 +3,11 @@ package com.example.chatting;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -17,15 +15,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class AllUsersActivity extends AppCompatActivity {
+    private Toolbar mToolBar;
+    private ListView usersListView;
     private ArrayList <String>UsersId;
     private ArrayList <Users>UsersArrayList;
-    private ListView usersListView;
-    private Toolbar mToolBar;
-    private DatabaseReference mDatabaseReference;
     private FirebaseUser currentUser;
     private FirebaseAuth mAuth;
 
@@ -33,7 +29,6 @@ public class AllUsersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_users);
-
         mAuth=FirebaseAuth.getInstance();
         currentUser=mAuth.getCurrentUser();
         final String UId=currentUser.getUid();
@@ -44,7 +39,7 @@ public class AllUsersActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("All Users");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //listView
+        //define xml components
         usersListView= (ListView)findViewById(R.id.AllUsers_ListView_id);
 
         UsersId=new ArrayList<>();

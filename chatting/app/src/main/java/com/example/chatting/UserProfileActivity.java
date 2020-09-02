@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.app.ProgressDialog;
 import android.icu.text.SimpleDateFormat;
 import android.os.Build;
@@ -14,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -24,15 +22,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class UserProfileActivity extends AppCompatActivity {
     private Toolbar mToolBar;
-    private ProgressDialog mProgressDialog;
-
     private ImageView UserImageView;
     private TextView UserNameView;
     private TextView UserStatusView;
@@ -43,7 +37,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private Button ConfirmRequestBtn;
     private Button RejectRequestBtn;
     private Button UnFriendPerson;
-
+    private ProgressDialog mProgressDialog;
     private String UserId;
     private String UserName;
     private String UserStatus;
@@ -52,13 +46,9 @@ public class UserProfileActivity extends AppCompatActivity {
     private int numbOfMutualFriends;
     private ArrayList<String> CurrentUserFriends;
     private ArrayList<String> UserFriends;
-
-
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String CurrentUId;
-    private DatabaseReference mDatabaseReference;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +75,7 @@ public class UserProfileActivity extends AppCompatActivity {
         CurrentUserFriends=new ArrayList<>();
         UserFriends=new ArrayList<>();
 
-        //define xml views
+        //define xml components
         UserImageView=(ImageView)findViewById(R.id.UserProfileImage);
         UserNameView=(TextView)findViewById(R.id.UserProfileName);
         UserStatusView=(TextView)findViewById(R.id.UserProfileStatus);
@@ -106,7 +96,6 @@ public class UserProfileActivity extends AppCompatActivity {
         FirebaseDatabase.getInstance().getReference().child("requests").child("1").setValue("1");
         FirebaseDatabase.getInstance().getReference().child("friends").child("1").setValue("1");
         FirebaseDatabase.getInstance().getReference().child("chats").child("1").setValue("1");
-
 
 
         checkUserHasRequest();
@@ -151,8 +140,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
             }
         });
-
-
 
 
         ConfirmRequestBtn.setOnClickListener(new View.OnClickListener() {
@@ -294,8 +281,6 @@ public class UserProfileActivity extends AppCompatActivity {
 
 
     private void checkUserHasRequest(){
-
-        //******************************************************************************************
         //check if the user have the request before or not
         DatabaseReference root=FirebaseDatabase.getInstance().getReference();
         DatabaseReference m=root.child("requests").child(CurrentUId).child(UserId);
@@ -318,7 +303,6 @@ public class UserProfileActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) {}
         };
         m.addListenerForSingleValueEvent(eventListener);
-        //******************************************************************************************
 
     }
 
@@ -364,7 +348,6 @@ public class UserProfileActivity extends AppCompatActivity {
         m.addListenerForSingleValueEvent(eventListener);
 
     }
-
 
 
     private void ReceiveCurrentUserFriends(){

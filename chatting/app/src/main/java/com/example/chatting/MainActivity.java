@@ -1,4 +1,5 @@
 package com.example.chatting;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,27 +20,21 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
-
 import androidx.viewpager.widget.ViewPager;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private long backPressed;
     private Toolbar mToolBar;
-    private FirebaseAuth mAuth;
-
     private ViewPager mViewPager;
     private TabLayout mTabLayout;
     private SectionPagerAdapter mPagerAdapter;
     public static Activity fa;
-
     private ArrayList<String> Users;
-
-
     public static boolean isFinished;
     private String UserId;
     private String CurrentUserId;
+    private FirebaseAuth mAuth;
+    private long backPressed;
 
 
     @Override
@@ -49,11 +44,12 @@ public class MainActivity extends AppCompatActivity {
         fa=this;
         mAuth= FirebaseAuth.getInstance();
 
+        //toolbar
         mToolBar= (Toolbar)findViewById(R.id.MainToolBar);
         setSupportActionBar(mToolBar);
         getSupportActionBar().setTitle("Messageya");
 
-
+        //define xml components
         mTabLayout=(TabLayout)findViewById(R.id.MainTabLayout);
         mViewPager=(ViewPager)findViewById(R.id.MainViewPager);
 
@@ -123,25 +119,19 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this,AccountSettingActivity.class);
             startActivity(intent);
         }
-
         else if(id == R.id.AllUsers_id){
             Intent intent = new Intent(MainActivity.this,AllUsersActivity.class);
             startActivity(intent);
         }
-
         else if(id == R.id.DeleteAccount_id){
             Intent intent = new Intent(MainActivity.this,DeleteAccountActivity.class);
             startActivity(intent);
         }
-
         else if(id == R.id.Logout_id){
             CheckIfLogOutOrNot();
         }
-
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     private void CheckIfLogOutOrNot(){
@@ -175,22 +165,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public void onBackPressed() {
-        if(backPressed+2000 > System.currentTimeMillis()){
-            super.onBackPressed();
-            return;
-        }
-        else{
-            Toast.makeText(MainActivity.this,"Next Tap To Exit",Toast.LENGTH_SHORT).show();
-        }
-        backPressed=System.currentTimeMillis();
-    }
-
-
-
-
-
 
     private void AllUsersChats(){
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -221,7 +195,6 @@ public class MainActivity extends AppCompatActivity {
        FirebaseUser currentUser = mAuth.getCurrentUser();
         CurrentUserId= currentUser.getUid();
 
-
         //mark all the sent friends' messages online because me online now
         for(int i=0 ; i<Users.size();i++) {
             UserId = Users.get(i);
@@ -248,5 +221,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+    @Override
+    public void onBackPressed() {
+        if(backPressed+2000 > System.currentTimeMillis()){
+            super.onBackPressed();
+            return;
+        }
+        else{
+            Toast.makeText(MainActivity.this,"Tap Again To Exit",Toast.LENGTH_SHORT).show();
+        }
+        backPressed=System.currentTimeMillis();
+    }
 
 }

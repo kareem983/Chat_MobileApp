@@ -2,16 +2,13 @@ package com.example.chatting;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -19,7 +16,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 
 public class RequestsFragment extends Fragment {
@@ -37,7 +33,6 @@ public class RequestsFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private String CurrentUId;
-
 
 
     public RequestsFragment() {
@@ -67,7 +62,7 @@ public class RequestsFragment extends Fragment {
         // Inflate the layout for this fragment
         mMainView = inflater.inflate(R.layout.fragment_requests, container, false);
 
-        //define list view
+        //define xml component
         UserRequestListView=(ListView)mMainView.findViewById(R.id.UserRequest_ListView_id);
 
         SomeProcess();
@@ -101,7 +96,8 @@ public class RequestsFragment extends Fragment {
                startActivity(intent);
 
                UsersId=new ArrayList<>();
-               UsersArrayList=new ArrayList<>();
+              //UsersArrayList=new ArrayList<>();
+
            }
        });
 
